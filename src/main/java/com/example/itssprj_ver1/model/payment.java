@@ -9,8 +9,8 @@ import java.sql.Date;
 
 @Entity
 @Table(name="payment")
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class payment {
 

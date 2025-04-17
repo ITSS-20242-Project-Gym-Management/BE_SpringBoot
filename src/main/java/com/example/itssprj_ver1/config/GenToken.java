@@ -1,4 +1,4 @@
-package tech.example.mart.config;
+package com.example.itssprj_ver1.config;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -41,7 +41,7 @@ public class GenToken {
         }
     }
 
-    // Hàm tạo HMAC SHA-256 cho chữ ký
+    // Hàm tạo HMAC SHA-256 cho chữ ký(Signature)
     private static String generateHMAC(String data) throws Exception {
         Mac hmacSHA256 = Mac.getInstance("HmacSHA256");
         SecretKeySpec secretKey = new SecretKeySpec(GenToken.SECRET_KEY.getBytes(StandardCharsets.UTF_8), "HmacSHA256");

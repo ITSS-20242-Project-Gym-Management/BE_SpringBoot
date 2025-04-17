@@ -9,8 +9,8 @@ import java.sql.Date;
 
 @Entity
 @Table(name="memberRegister")
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class memberRegister {
     @Id

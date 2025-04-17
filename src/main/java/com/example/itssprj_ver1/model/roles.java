@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name="roles")
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class roles {
     @Id

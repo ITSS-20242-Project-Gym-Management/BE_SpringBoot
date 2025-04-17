@@ -1,7 +1,9 @@
 package com.example.itssprj_ver1.service;
 
 import com.example.itssprj_ver1.exceptions.UserNotFoundException;
+import com.example.itssprj_ver1.model.roles;
 import com.example.itssprj_ver1.model.users;
+import com.example.itssprj_ver1.repository.roleRepository;
 import com.example.itssprj_ver1.repository.userRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,16 +15,31 @@ import java.util.List;
 public class userService implements userServiceI {
 
     private final userRepository userRepository;
+    private final roleRepository roleRepository;
 
     @Override
-    public users addUser(users User) {
-        return null;
+    public boolean addUser(String username, String password, int roleid) {
+        roles role = roleRepository.findById(roleid);
+        if (role == null) {
+            return false;
+        }
+        users user = userRepository.findByUsername(username);
+        if (user == null) {
+            user = new users();
+            user.setUsername(username);
+            user.setPassword(password);
+            user.setRole(role);
+            userRepository.save(user);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public users getUserbyId(int id) {
         return userRepository.findById(id)
-                .orElseThrow(()-> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
     }
 
@@ -50,7 +67,9 @@ public class userService implements userServiceI {
     public void deleteUserbyId(int id) {
         userRepository.findById(id)
                 .ifPresentOrElse(userRepository::delete
-                        ,()-> {throw new UserNotFoundException("User not found");});
+                        , () -> {
+                            throw new UserNotFoundException("User not found");
+                        });
     }
 
     @Override

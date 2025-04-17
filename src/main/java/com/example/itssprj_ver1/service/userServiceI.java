@@ -5,7 +5,7 @@ import com.example.itssprj_ver1.model.users;
 import java.util.List;
 
 public interface userServiceI {
-    users addUser(users User);
+    boolean addUser(String username, String password, int roleid);
 
     users getUserbyId(int id);
     users getUserbyUsername(String username);
