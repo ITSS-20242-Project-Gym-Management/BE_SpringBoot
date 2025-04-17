@@ -14,6 +14,7 @@ import static com.example.itssprj_ver1.config.GenToken.generateToken;
 @RestController
 @RequestMapping("/manager")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
 public class managerController {
     private final managerService managerService;
     private final reviewService reviewService;
@@ -27,6 +28,7 @@ public class managerController {
             if (managerService.loginManager(username, password)) {
                 String token = generateToken(username, password);
                 response.put("status", "Đăng nhập thành công");
+                response.put("role", "manager");
                 response.put("token", token);
                 return ResponseEntity.ok(response);
             } else {

@@ -43,6 +43,6 @@ public class customer {
     private String phone;
 
     @CreationTimestamp
-    @Column(nullable = false)
+    @Column(nullable = true) //để thành null
     private LocalDateTime updateAt;
 }

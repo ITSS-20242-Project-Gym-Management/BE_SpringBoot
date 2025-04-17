@@ -13,6 +13,7 @@ import static com.example.itssprj_ver1.config.GenToken.generateToken;
 @RequestMapping("/admin")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
 public class adminController {
     private final adminService adminService;
 
@@ -25,6 +26,7 @@ public class adminController {
             if(adminService.loginAdmin(username,password)){
                 String token = generateToken(username, password);
                 response.put("status", "Đăng nhập thành công");
+                response.put("role", "admin");
                 response.put("token", token);
                 return ResponseEntity.ok(response);
             }

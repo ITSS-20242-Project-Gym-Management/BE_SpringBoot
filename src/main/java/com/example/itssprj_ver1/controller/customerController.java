@@ -3,10 +3,7 @@ package com.example.itssprj_ver1.controller;
 import com.example.itssprj_ver1.service.customerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +13,7 @@ import static com.example.itssprj_ver1.config.GenToken.generateToken;
 @RestController
 @RequestMapping("/customer")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
 public class customerController {
     private final customerService customerService;
 
@@ -28,6 +26,7 @@ public class customerController {
             if(customerService.loginCustomer(username,password)){
                 String token = generateToken(username, password);
                 response.put("status", "Đăng nhập thành công");
+                response.put("role", "customer");
                 response.put("token", token);
                 return ResponseEntity.ok(response);
             }
