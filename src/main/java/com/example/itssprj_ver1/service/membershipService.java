@@ -1,4 +1,9 @@
 package com.example.itssprj_ver1.service;
 
-public class membershipService {
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class membershipService implements membershipServiceI {
 }
