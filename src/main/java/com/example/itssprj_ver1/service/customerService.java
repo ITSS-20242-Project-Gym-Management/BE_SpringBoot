@@ -21,7 +21,7 @@ public class customerService implements customerServiceI {
     @Override
     public boolean loginCustomer(String username, String password) {
         users user = userRepository.findByUsername(username);
-        if (user != null && user.getPassword().equals(password) && user.getRole().getRoleid() == 4) {
+        if (user != null && user.getPassword().equals(password) && user.getRole().getRolename().equals("customer")) {
             return true;
         }
         return false;

@@ -56,39 +56,4 @@ public class GenToken {
         byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
         return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
     }
-
-    //kiểm tra token
-    public static boolean validateToken(String token) {
-        try {
-            String[] parts = token.split("\\.");
-            if (parts.length != 3) return false;
-
-            String headerPayload = parts[0] + "." + parts[1];
-            String signature = GenToken.generateHMAC(headerPayload);
-
-            return signature.equals(parts[2]);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    // Lấy username từ token
-    public static String extractUsername(String token) {
-        try {
-            String[] parts = token.split("\\.");
-            if (parts.length != 3) return null;
-
-            String payload = parts[1];
-            byte[] decodedBytes = Base64.getUrlDecoder().decode(payload);
-            String decodedPayload = new String(decodedBytes, StandardCharsets.UTF_8);
-
-            // Tìm username từ payload
-            int startIndex = decodedPayload.indexOf("\"sub\":\"") + 7;
-            int endIndex = decodedPayload.indexOf("\"", startIndex);
-
-            return decodedPayload.substring(startIndex, endIndex);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }

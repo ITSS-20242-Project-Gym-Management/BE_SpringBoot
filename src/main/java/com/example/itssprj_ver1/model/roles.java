@@ -2,6 +2,7 @@ package com.example.itssprj_ver1.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class roles {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)

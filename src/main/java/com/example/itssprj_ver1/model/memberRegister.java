@@ -2,6 +2,7 @@ package com.example.itssprj_ver1.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class memberRegister {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)

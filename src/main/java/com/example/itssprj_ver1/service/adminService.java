@@ -1,6 +1,7 @@
 package com.example.itssprj_ver1.service;
 
 import com.example.itssprj_ver1.model.users;
+
 import com.example.itssprj_ver1.repository.userRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class adminService implements adminServiceI {
     @Override
     public boolean loginAdmin(String username, String password) {
         users user = userRepository.findByUsername(username);
-        if (user != null && user.getPassword().equals(password) && user.getRole().getRoleid() == 1) {
+        if (user != null && user.getPassword().equals(password) && user.getRole().getRolename().equals("admin")) {
             return true;
         }
         return false;

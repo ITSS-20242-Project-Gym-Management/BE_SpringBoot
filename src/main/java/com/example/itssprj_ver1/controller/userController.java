@@ -21,9 +21,16 @@ public class userController {
     private final userRepository userRepository;
 
     @PostMapping("/addUser")
-    public ResponseEntity<Map<String, Object>> addUser(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> addUser(@RequestBody Map<String, String> request,
+                                                       @RequestHeader(value = "token", required = false) String token) {
         Map<String, Object> response = new HashMap<>();
         try {
+            if (token == null || token.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Token is missing or invalid");
+                return ResponseEntity.badRequest().body(response);
+            }
+
             // đăng ký tài khoản
             String username = request.get("username");
             String password = request.get("password");
