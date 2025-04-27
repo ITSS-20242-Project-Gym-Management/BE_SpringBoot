@@ -1,31 +1,31 @@
 package com.example.itssprj_ver1.controller;
 
-import com.example.itssprj_ver1.service.exerSession;
-import com.example.itssprj_ver1.service.roomEquipmentService;
+import com.example.itssprj_ver1.model.review;
+import com.example.itssprj_ver1.service.*;
 import com.example.itssprj_ver1.repository.userRepository;
-import com.example.itssprj_ver1.service.managerService;
-import com.example.itssprj_ver1.service.reviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.sql.Date;
 
 import static com.example.itssprj_ver1.config.GenToken.generateToken;
 
 @RestController
 @RequestMapping("/manager")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class managerController {
     private final managerService managerService;
     private final reviewService reviewService;
     private final userRepository userRepository;
     private final roomEquipmentService roomEquipmentService;
     private final exerSession exerSession;
+    private final paymentService paymentService;
+    private final memRegService memRegService;
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
@@ -49,13 +49,15 @@ public class managerController {
         }
     }
 
-    @GetMapping("/getReview")
+
+    @GetMapping("/getReviews")
     public ResponseEntity<Map<String, Object>> getReview() {
         Map<String, Object> response = new HashMap<>();
         try {
+            List<Map<String, Object>> reviews = reviewService.getReview();
             if (reviewService.getReview() != null) {
                 response.put("status", "Lấy danh sách review thành công");
-                response.put("data", reviewService.getReview());
+                response.put("data", reviews);
                 return ResponseEntity.ok(response);
             } else {
                 response.put("status", "Không có review nào");
@@ -200,7 +202,7 @@ public class managerController {
             } else if (hasStatus) {
                 // Trường hợp 6: Chỉ status
                 roomEquipments = roomEquipmentService.getRoomEquipmentByStatus(status);
-            }else {
+            } else {
                 // Default case: No parameters provided - initialize with empty list
                 roomEquipments = new ArrayList<>();
             }
@@ -247,7 +249,7 @@ public class managerController {
     }
 
     @GetMapping("/getExercise")
-    public ResponseEntity<Map<String, Object>> getExercise(@RequestHeader(value = "token", required = false) String token){
+    public ResponseEntity<Map<String, Object>> getExercise(@RequestHeader(value = "token", required = false) String token) {
         Map<String, Object> response = new HashMap<>();
         try {
             // Kiểm tra token
@@ -266,6 +268,273 @@ public class managerController {
                 return ResponseEntity.status(404).body(response);
             }
         } catch (Exception e) {
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @PostMapping("/addExercise")// thêm quan hệ khách hàng với pt
+    public ResponseEntity<Map<String, Object>> addExerciseSession(@RequestHeader(value = "token", required = false) String token,
+                                                                  @RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Kiểm tra token
+            if (token == null || token.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Token is missing or invalid");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Kiểm tra các trường bắt buộc
+            String cufirstname = request.get("cufirstname");
+            String culastname = request.get("culastname");
+            String ptfirstname = request.get("ptfirstname");
+            String ptlastname = request.get("ptlastname");
+            String exerciseType = request.get("exerciseType");
+
+            if (exerSession.addSession(cufirstname, culastname, ptfirstname, ptlastname, exerciseType)) {
+                response.put("status", "Thêm buổi tập thành công");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "Thêm buổi tập không thành công");
+                return ResponseEntity.status(400).body(response);
+            }
+        } catch (Exception e) {
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @PostMapping("/updateExercise")
+    public ResponseEntity<Map<String, Object>> updateExerciseExerciseSession(@RequestHeader(value = "token", required = false) String token,
+                                                                             @RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Kiểm tra token
+            if (token == null || token.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Token is missing or invalid");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Kiểm tra sessionid có trong request không
+            if (!request.containsKey("sessionid")) {
+                response.put("status", "Thiếu sessionid");
+                return ResponseEntity.status(400).body(response);
+            }
+
+            int sessionid = Integer.parseInt(request.get("sessionid"));
+            String cufirstname = request.get("cufirstname");
+            String culastname = request.get("culastname");
+            String ptfirstname = request.get("ptfirstname");
+            String ptlastname = request.get("ptlastname");
+            String exerciseType = request.get("exerciseType");
+
+            if (exerSession.updateSession(sessionid, cufirstname, culastname, ptfirstname, ptlastname, exerciseType)) {
+                response.put("status", "Sửa buổi tập thành công");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "Sửa buổi tập không thành công");
+                return ResponseEntity.status(400).body(response);
+            }
+        } catch (Exception e) {
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @PostMapping("addPayment")
+    public ResponseEntity<Map<String, Object>> addPayment(@RequestHeader(value = "token", required = false) String token,
+                                                          @RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Kiểm tra token
+            if (token == null || token.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Token is missing or invalid");
+                return ResponseEntity.badRequest().body(response);
+            }
+            String cufirstname = request.get("cufirstname");
+            String culastname = request.get("culastname");
+            String paymentMethod = request.get("paymentMethod");
+            Float amount = Float.parseFloat(request.get("amount"));
+            Boolean paid = Boolean.parseBoolean(request.get("paid"));
+
+            if (paymentService.addPayment(cufirstname, culastname, paymentMethod, amount, paid)) {
+                response.put("status", "Thêm thanh toán thành công");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "Thêm thanh toán không thành công");
+                return ResponseEntity.status(400).body(response);
+            }
+        } catch (Exception e) {
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @PostMapping("/addMemberRegister")
+    public ResponseEntity<Map<String, Object>> addMemberRegister(
+            @RequestHeader(value = "token", required = false) String token,
+            @RequestBody Map<String, String> request) {
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Kiểm tra token
+            if (token == null || token.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Token is missing or invalid");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Lấy thông tin từ request
+            String cufirstname = request.get("cufirstname");
+            String culastname = request.get("culastname");
+            String namepackage = request.get("namepackage");
+            String status = request.get("status");
+
+            // Parse dates from request
+            Date beginAt = null;
+            Date endAt = null;
+            try {
+                if (request.containsKey("beginAt") && !request.get("beginAt").isEmpty()) {
+                    String beginAtStr = request.get("beginAt");
+                    // Nếu cần chuyển đổi định dạng từ dd/MM/yyyy sang yyyy-MM-dd
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    java.util.Date parsedDate = inputFormat.parse(beginAtStr);
+                    beginAt = Date.valueOf(outputFormat.format(parsedDate));
+                }
+                if (request.containsKey("endAt") && !request.get("endAt").isEmpty()) {
+                    // Tương tự cho endAt
+                    String endAtStr = request.get("endAt");
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    java.util.Date parsedDate = inputFormat.parse(endAtStr);
+                    endAt = Date.valueOf(outputFormat.format(parsedDate));
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Định dạng ngày tháng không hợp lệ: " + e.getMessage());
+            }
+
+            // Gọi service để thêm member register
+            if (memRegService.addMemberReg(cufirstname, culastname, namepackage, status, beginAt, endAt)) {
+                response.put("status", "Đăng ký gói tập thành công");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "Đăng ký gói tập không thành công");
+                return ResponseEntity.status(400).body(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @PostMapping("/updateMemberRegister")
+    public ResponseEntity<Map<String, Object>> updateMemberRegister(@RequestHeader(value = "token", required = false) String token,
+                                                                    @RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Kiểm tra token
+            if (token == null || token.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Token is missing or invalid");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Lấy thông tin từ request
+            int memberRegId = Integer.parseInt(request.get("memberRegId"));
+            String status = request.get("status");
+
+            // Parse dates from request
+            Date beginAt = null;
+            Date endAt = null;
+            try {
+                if (request.containsKey("beginAt") && !request.get("beginAt").isEmpty()) {
+                    String beginAtStr = request.get("beginAt");
+                    // Nếu cần chuyển đổi định dạng từ dd/MM/yyyy sang yyyy-MM-dd
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    java.util.Date parsedDate = inputFormat.parse(beginAtStr);
+                    beginAt = Date.valueOf(outputFormat.format(parsedDate));
+                }
+                if (request.containsKey("endAt") && !request.get("endAt").isEmpty()) {
+                    // Tương tự cho endAt
+                    String endAtStr = request.get("endAt");
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    java.util.Date parsedDate = inputFormat.parse(endAtStr);
+                    endAt = Date.valueOf(outputFormat.format(parsedDate));
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Định dạng ngày tháng không hợp lệ: " + e.getMessage());
+            }
+
+            // Gọi service để thêm member register
+            if (memRegService.updateMemberReg(memberRegId, status, beginAt, endAt)) {
+                response.put("status", "Gia hạn gói tập cho khách thành công");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "Gia hạn gói tập cho khách không thành công");
+                return ResponseEntity.status(400).body(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @GetMapping("/getMemberRegister")
+    public ResponseEntity<Map<String, Object>> getMemberRegister(@RequestHeader(value = "token", required = false) String token,
+                                                                 @RequestParam(value = "status", required = false) String status,
+                                                                 @RequestParam(value = "createAt", required = false) String createAtStr) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Kiểm tra token
+            if (token == null || token.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Token is missing or invalid");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Parse dates from request
+            Date createAt = null;
+            if (createAtStr != null && !createAtStr.isEmpty()) {
+                try {
+                    // Chuyển đổi định dạng từ dd-MM-yyyy sang yyyy-MM-dd
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    java.util.Date parsedDate = inputFormat.parse(createAtStr);
+                    createAt = Date.valueOf(outputFormat.format(parsedDate));
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Định dạng ngày tháng không hợp lệ: " + e.getMessage());
+                }
+            }
+
+            List<Map<String, Object>> memberRegisters = new ArrayList<>();
+
+            if (status != null && !status.isEmpty() && createAt == null) {
+                memberRegisters = memRegService.getMemberRegByStatus(status);
+            } else if (createAt != null && status == null) {
+                memberRegisters = memRegService.getMemberRegByCreateAt(createAt);
+            } else if (createAt == null && status == null) {
+                memberRegisters = memRegService.getAllMemberReg();
+            }
+
+            if (memberRegisters != null && !memberRegisters.isEmpty()) {
+                response.put("status", "Lấy danh sách gia hạn thành công");
+                response.put("list", memberRegisters);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "Không có dữ liệu gia hạn");
+                response.put("list", new ArrayList<>());  // Return empty list instead of null
+                return ResponseEntity.ok(response);  // Return 200 OK with empty list
+            }
+        } catch (Exception e) {
+            e.printStackTrace();  // For debugging
             response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }

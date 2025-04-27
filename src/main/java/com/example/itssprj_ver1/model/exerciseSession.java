@@ -31,10 +31,10 @@ public class exerciseSession {
     @Column(name = "ExerciseType",nullable = true)
     private String ExerciseType;
 
-    @Column(name = "beginAt",nullable = false)
+    @Column(name = "beginAt",nullable = true)//sửa not null -> null
     private LocalDateTime beginAt;
 
-    @Column(name = "endAt",nullable = false)
+    @Column(name = "endAt",nullable = true)//sửa not null -> null
     private LocalDateTime endAt;
 
     @Column(name = "description",nullable = true)

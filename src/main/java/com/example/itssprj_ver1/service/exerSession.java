@@ -1,7 +1,11 @@
 package com.example.itssprj_ver1.service;
 
+import com.example.itssprj_ver1.model.customer;
 import com.example.itssprj_ver1.model.exerciseSession;
+import com.example.itssprj_ver1.model.staff;
+import com.example.itssprj_ver1.repository.customerRepository;
 import com.example.itssprj_ver1.repository.exerSessionRepository;
+import com.example.itssprj_ver1.repository.staffRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +22,10 @@ import java.util.Map;
 public class exerSession implements exerSessionI {
     @Autowired
     private exerSessionRepository exerSessionRepository;
-
+    @Autowired
+    private customerRepository customerRepository;
+    @Autowired
+    private staffRepository staffRepository;
     @Override
     public List<Map<String, Object>> getAllSessions() {
         List<exerciseSession> sessions = exerSessionRepository.findByStaff_Userid_Role_Roleid(3);
@@ -48,5 +55,65 @@ public class exerSession implements exerSessionI {
         }
 
         return sessionsList;
+    }
+
+    @Override
+    public boolean addSession(String cufirstname, String culastname, String ptfirstname, String ptlastname,String exerciseType) {
+        customer customer = customerRepository.findByFirstnameAndLastname(cufirstname, culastname);
+        if (customer == null) {
+            return false; // Không tìm thấy khách hàng
+        }
+
+        staff staff = staffRepository.findByFirstnameAndLastname(ptfirstname, ptlastname);
+        if (staff == null) {
+            return false; // Không tìm thấy huấn luyện viên
+        }
+        try {
+
+            // Tạo đối tượng exerciseSession sử dụng builder pattern
+            exerciseSession session = exerciseSession.builder()
+                    .customer(customer)
+                    .staff(staff)
+                    .ExerciseType(exerciseType)
+                    .build();
+
+            // Lưu buổi tập vào database
+            exerSessionRepository.save(session);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateSession(int sessionid,String cufirstname, String culastname, String ptfirstname, String ptlastname, String exerciseType) {
+        exerciseSession session = exerSessionRepository.findById(sessionid).orElse(null);
+        if (session == null) {
+            return false;
+        }
+        customer customer = customerRepository.findByFirstnameAndLastname(cufirstname, culastname);
+        if (customer == null) {
+            return false; // Không tìm thấy khách hàng
+        }
+        staff staff = staffRepository.findByFirstnameAndLastname(ptfirstname, ptlastname);
+        if (staff == null) {
+            return false; // Không tìm thấy huấn luyện viên
+        }
+        try {
+            // Cập nhật các thuộc tính của đối tượng hiện có
+            session.setCustomer(customer);
+            session.setStaff(staff);
+            session.setExerciseType(exerciseType);
+
+            // Lưu buổi tập vào database
+            exerSessionRepository.save(session);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

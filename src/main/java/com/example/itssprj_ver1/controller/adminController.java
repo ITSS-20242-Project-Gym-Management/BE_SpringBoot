@@ -14,7 +14,7 @@ import static com.example.itssprj_ver1.config.GenToken.generateToken;
 @RequestMapping("/admin")
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class adminController {
     private final adminService adminService;
     private final userRepository userRepository;

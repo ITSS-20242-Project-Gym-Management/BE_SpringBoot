@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface staffRepository extends JpaRepository<staff, Integer> {
+    staff findByFirstnameAndLastname(String ptfirstname, String ptlastname);
 }

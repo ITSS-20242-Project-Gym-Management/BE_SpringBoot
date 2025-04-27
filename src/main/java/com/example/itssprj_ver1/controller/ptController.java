@@ -14,7 +14,7 @@ import static com.example.itssprj_ver1.config.GenToken.generateToken;
 @RestController
 @RequestMapping("/pt")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class ptController {
     private final ptService ptService;
     private final userRepository userRepository;
