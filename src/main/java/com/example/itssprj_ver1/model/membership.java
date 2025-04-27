@@ -1,9 +1,17 @@
 package com.example.itssprj_ver1.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name="membership")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
 public class membership {
 
     @Id

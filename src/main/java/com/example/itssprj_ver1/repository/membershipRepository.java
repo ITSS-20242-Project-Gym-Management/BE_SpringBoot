@@ -1,4 +1,7 @@
 package com.example.itssprj_ver1.repository;
 
-public interface membershipRepository {
+import com.example.itssprj_ver1.model.membership;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface membershipRepository extends JpaRepository<membership, Integer> {
 }

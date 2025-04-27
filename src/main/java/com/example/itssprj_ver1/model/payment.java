@@ -1,11 +1,20 @@
 package com.example.itssprj_ver1.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 
+
 @Entity
 @Table(name="payment")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
 public class payment {
 
     @Id

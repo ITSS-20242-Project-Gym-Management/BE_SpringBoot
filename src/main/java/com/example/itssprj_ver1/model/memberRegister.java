@@ -1,11 +1,21 @@
 package com.example.itssprj_ver1.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name="memberRegister")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
 public class memberRegister {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
@@ -26,10 +36,10 @@ public class memberRegister {
     private String status;
 
     @Column(name = "beginAt",nullable = true)
-    private Date beginAt;
+    private LocalDate beginAt;
 
     @Column(name = "endAt",nullable = true)
-    private Date endAt;
+    private LocalDate endAt;
 
 
 }
