@@ -1,6 +1,7 @@
 package com.example.itssprj_ver1.service;
 
 import com.example.itssprj_ver1.model.customer;
+import com.example.itssprj_ver1.model.roomEquipment;
 import com.example.itssprj_ver1.model.users;
 import com.example.itssprj_ver1.repository.customerRepository;
 import com.example.itssprj_ver1.repository.userRepository;
@@ -8,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +49,26 @@ public class customerService implements customerServiceI {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public List<Map<String, Object>> getAllCustomers() {
+        List<customer> customers = customerRepository.findAll();
+        if (customers == null || customers.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Map<String, Object>> mappedResults = new ArrayList<>();
+        for (customer result : customers) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("customerId", result.getId());
+            response.put("customerName", result.getFirstname() + " " + result.getLastname());
+            response.put("customerAge", result.getAge());
+            response.put("customerGender", result.getGender());
+            response.put("customerPhone", result.getPhone());
+            response.put("customerEmail", result.getEmail());
+            response.put("infoUpdateAt", result.getUpdateAt());
+            mappedResults.add(response);
+        }
+        return mappedResults;
     }
 }
