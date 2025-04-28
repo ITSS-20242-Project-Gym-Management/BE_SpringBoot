@@ -23,9 +23,9 @@ public class roomEquipmentService implements roomEquipmentServiceI {
     private roomRepository roomRepository;
 
     @Override
-    public boolean addRoomEquipment(int roomid, String equipment_name, int quantity, String status) {
+    public boolean addRoomEquipment(String room_name, String equipment_name, int quantity, String status) {
         roomEquipment roomEquipment = new roomEquipment();
-        room room = roomRepository.findById(roomid);
+        room room = roomRepository.findByName(room_name);
         if (room == null) {
             return false;
         }

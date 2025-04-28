@@ -1,6 +1,5 @@
 package com.example.itssprj_ver1.controller;
 
-import com.example.itssprj_ver1.model.review;
 import com.example.itssprj_ver1.service.*;
 import com.example.itssprj_ver1.repository.userRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,9 +50,16 @@ public class managerController {
 
 
     @GetMapping("/getReviews")
-    public ResponseEntity<Map<String, Object>> getReview() {
+    public ResponseEntity<Map<String, Object>> getReview(@RequestHeader(value = "token", required = false) String token) {
         Map<String, Object> response = new HashMap<>();
         try {
+            // Kiểm tra token
+            if (token == null || token.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Token is missing or invalid");
+                return ResponseEntity.badRequest().body(response);
+            }
+
             List<Map<String, Object>> reviews = reviewService.getReview();
             if (reviewService.getReview() != null) {
                 response.put("status", "Lấy danh sách review thành công");
@@ -81,12 +87,12 @@ public class managerController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            int roomid = Integer.parseInt(request.get("roomid"));
+            String room_name = request.get("room_name");
             String equipment_name = request.get("equipment_name");
             int quantity = Integer.parseInt(request.get("quantity"));
             String status = request.get("status");
 
-            if (roomEquipmentService.addRoomEquipment(roomid, equipment_name, quantity, status)) {
+            if (roomEquipmentService.addRoomEquipment(room_name, equipment_name, quantity, status)) {
                 response.put("status", "Thêm thiết bị thành công");
                 return ResponseEntity.ok(response);
             } else {
@@ -157,12 +163,10 @@ public class managerController {
         }
     }
 
-    @GetMapping("/findDevice")
+    @PostMapping("/findDevice")
     public ResponseEntity<Map<String, Object>> findDevice(
             @RequestHeader(value = "token", required = false) String token,
-            @RequestParam(value = "room_name", required = false) String room_name,
-            @RequestParam(value = "roomEquipment", required = false) String roomEquipment,
-            @RequestParam(value = "status", required = false) String status) {
+            @RequestBody Map<String, String> request) {
 
         Map<String, Object> response = new HashMap<>();
         try {
@@ -172,7 +176,9 @@ public class managerController {
                 response.put("message", "Token is missing or invalid");
                 return ResponseEntity.badRequest().body(response);
             }
-
+            String room_name = request.get("room_name");
+            String roomEquipment = request.get("roomEquipment");
+            String status = request.get("status");
             // Xử lý các giá trị rỗng
             boolean hasRoomName = room_name != null && !room_name.trim().isEmpty();
             boolean hasEquipment = roomEquipment != null && !roomEquipment.trim().isEmpty();
@@ -203,8 +209,8 @@ public class managerController {
                 // Trường hợp 6: Chỉ status
                 roomEquipments = roomEquipmentService.getRoomEquipmentByStatus(status);
             } else {
-                // Default case: No parameters provided - initialize with empty list
-                roomEquipments = new ArrayList<>();
+                // Trường hợp 7: Không có tham số nào
+                roomEquipments = roomEquipmentService.getAllRoomEquipment();
             }
 
             // Trả về kết quả
@@ -219,31 +225,6 @@ public class managerController {
         } catch (Exception e) {
             response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
             e.printStackTrace(); // Log lỗi để debug
-            return ResponseEntity.status(500).body(response);
-        }
-    }
-
-    @GetMapping("/getFullDevice")
-    public ResponseEntity<Map<String, Object>> getFullDevice(@RequestHeader(value = "token", required = false) String token) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            // Kiểm tra token
-            if (token == null || token.isEmpty()) {
-                response.put("success", false);
-                response.put("message", "Token is missing or invalid");
-                return ResponseEntity.badRequest().body(response);
-            }
-            List<Map<String, Object>> roomEquipments = roomEquipmentService.getAllRoomEquipment();
-            if (roomEquipments != null) {
-                response.put("status", "Lấy danh sách thiết bị thành công");
-                response.put("list", roomEquipments);
-                return ResponseEntity.ok(response);
-            } else {
-                response.put("status", "Không có thiết bị nào");
-                return ResponseEntity.status(404).body(response);
-            }
-        } catch (Exception e) {
-            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }

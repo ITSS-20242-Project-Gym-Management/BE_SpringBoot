@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface roomEquipmentServiceI {
-    boolean addRoomEquipment(int roomid, String equipment_name, int quantity, String status);
+    boolean addRoomEquipment(String room_name, String equipment_name, int quantity, String status);
 
     boolean updateRoomEquipment(int roomid, String equipment_name, String status);
 
