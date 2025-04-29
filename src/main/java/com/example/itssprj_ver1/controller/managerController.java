@@ -10,8 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.sql.Date;
 
-import static com.example.itssprj_ver1.config.GenToken.generateToken;
-
 @RestController
 @RequestMapping("/manager")
 @RequiredArgsConstructor
@@ -23,6 +21,8 @@ public class managerController {
     private final paymentService paymentService;
     private final memRegService memRegService;
     private final customerService customerService;
+    private final membershipService membershipService;
+    private final roomService roomService;
 
     @GetMapping("/getReviews")
     public ResponseEntity<Map<String, Object>> getReview(@RequestHeader(value = "token", required = false) String token) {
@@ -517,6 +517,58 @@ public class managerController {
             }
         } catch (Exception e) {
             e.printStackTrace();  // For debugging
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @GetMapping("/getMembership")
+    public ResponseEntity<Map<String, Object>> getMembership(@RequestHeader(value = "token", required = false) String token) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Kiểm tra token
+            if (token == null || token.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Token is missing or invalid");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            List<Map<String, Object>> memberships = membershipService.getMembership();
+            if (memberships != null) {
+                response.put("status", "Lấy danh sách gói tập thành công");
+                response.put("list", memberships);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "Không có gói tập nào");
+                return ResponseEntity.status(404).body(response);
+            }
+        } catch (Exception e) {
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @GetMapping("/getRoom")
+    public ResponseEntity<Map<String, Object>> getRoom(@RequestHeader(value = "token", required = false) String token) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Kiểm tra token
+            if (token == null || token.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Token is missing or invalid");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            List<Map<String, Object>> rooms = roomService.getRoom();
+            if (rooms != null) {
+                response.put("status", "Lấy danh sách phòng tập thành công");
+                response.put("list", rooms);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "Không có phòng nào");
+                return ResponseEntity.status(404).body(response);
+            }
+        } catch (Exception e) {
             response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
