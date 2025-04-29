@@ -5,6 +5,7 @@ import com.example.itssprj_ver1.model.users;
 import com.example.itssprj_ver1.repository.roleRepository;
 import com.example.itssprj_ver1.repository.userRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,8 +14,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class userService implements userServiceI {
 
-    private final userRepository userRepository;
-    private final roleRepository roleRepository;
+    @Autowired
+    private  userRepository userRepository;
+    @Autowired
+    private  roleRepository roleRepository;
 
     @Override
     public boolean addUser(String username, String password, int roleid) {
@@ -35,29 +38,12 @@ public class userService implements userServiceI {
         }
     }
 
-
     @Override
-    public users getUserbyUsername(String username) {
-        return null;
-
-    }
-
-    @Override
-    public List<users> getUserbyRole(int roleid) {
-
-        return null;
-
-    }
-
-    @Override
-    public boolean checkUserbyRoleUsername(String username, int roleid) {
-
+    public boolean login(String username, String password) {
+        users user = userRepository.findByUsername(username);
+        if (user != null && user.getPassword().equals(password)) {
+            return true;
+        }
         return false;
-
-    }
-
-    @Override
-    public void deleteUserbyUsername(String username) {
-
     }
 }

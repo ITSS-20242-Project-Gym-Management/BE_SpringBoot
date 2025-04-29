@@ -13,13 +13,4 @@ import org.springframework.stereotype.Service;
 public class adminService implements adminServiceI {
     @Autowired
     private userRepository userRepository;
-
-    @Override
-    public boolean loginAdmin(String username, String password) {
-        users user = userRepository.findByUsername(username);
-        if (user != null && user.getPassword().equals(password) && user.getRole().getRolename().equals("admin")) {
-            return true;
-        }
-        return false;
-    }
 }

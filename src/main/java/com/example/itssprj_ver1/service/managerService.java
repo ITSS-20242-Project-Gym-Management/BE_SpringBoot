@@ -12,12 +12,5 @@ public class managerService implements managerServiceI{
     @Autowired
     private userRepository userRepository;
 
-    @Override
-    public boolean loginManager(String username, String password) {
-        users user = userRepository.findByUsername(username);
-        if (user != null && user.getPassword().equals(password) && user.getRole().getRolename().equals("manager")) {
-            return true;
-        }
-        return false;
-    }
+
 }

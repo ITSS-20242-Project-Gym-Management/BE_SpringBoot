@@ -16,29 +16,5 @@ import static com.example.itssprj_ver1.config.GenToken.generateToken;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class ptController {
-    private final ptService ptService;
-    private final userRepository userRepository;
 
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            String username = request.get("username");
-            String password = request.get("password");
-            if (ptService.loginPt(username, password)) {
-                String token = generateToken(username, password);
-                response.put("status", "Đăng nhập thành công");
-                response.put("role", "pt");
-                response.put("token", token);
-                response.put("userid", userRepository.findByUsername(username).getId());
-                return ResponseEntity.ok(response);
-            } else {
-                response.put("status", "Thông tin đăng nhập không đúng");
-                return ResponseEntity.status(401).body(response);
-            }
-        } catch (Exception e) {
-            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
-            return ResponseEntity.status(500).body(response);
-        }
-    }
 }
