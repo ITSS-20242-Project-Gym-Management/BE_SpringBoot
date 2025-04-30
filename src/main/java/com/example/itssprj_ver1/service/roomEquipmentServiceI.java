@@ -6,9 +6,9 @@ import java.util.Map;
 public interface roomEquipmentServiceI {
     boolean addRoomEquipment(String room_name, String equipment_name, int quantity, String status);
 
-    boolean updateRoomEquipment(int roomid, String equipment_name, String status);
+    boolean updateRoomEquipment(String room_name, String equipment_name, String status);
 
-    boolean deleteRoomEquipment(int roomid, String equipment_name, int quantity);
+    boolean deleteRoomEquipment(String room_name, String equipment_name);
 
     List<Map<String, Object>> getRoomEquipmentByRoomName(String room_name);
 

@@ -118,11 +118,11 @@ public class managerController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            int roomid = Integer.parseInt(request.get("roomid"));
+            String room_name = request.get("room_name");
             String equipment_name = request.get("equipment_name");
             String status = request.get("status");
 
-            if (roomEquipmentService.updateRoomEquipment(roomid, equipment_name, status)) {
+            if (roomEquipmentService.updateRoomEquipment(room_name, equipment_name, status)) {
                 response.put("status", "Cập nhật thiết bị thành công");
                 return ResponseEntity.ok(response);
             } else {
@@ -147,11 +147,10 @@ public class managerController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            int roomid = Integer.parseInt(request.get("roomid"));
+            String room_name = request.get("room_name");
             String equipment_name = request.get("equipment_name");
-            int quantity = Integer.parseInt(request.get("quantity"));
 
-            if (roomEquipmentService.deleteRoomEquipment(roomid, equipment_name, quantity)) {
+            if (roomEquipmentService.deleteRoomEquipment(room_name, equipment_name)) {
                 response.put("status", "Xóa thiết bị thành công");
                 return ResponseEntity.ok(response);
             } else {

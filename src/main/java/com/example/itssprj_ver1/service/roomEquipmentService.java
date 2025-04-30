@@ -38,24 +38,24 @@ public class roomEquipmentService implements roomEquipmentServiceI {
     }
 
     @Override
-    public boolean updateRoomEquipment(int roomid, String equipment_name, String status) {
-        room room = roomRepository.findById(roomid);
+    public boolean updateRoomEquipment(String room_name, String equipment_name, String status) {
+        room room = roomRepository.findByName(room_name);
         if (room == null) {
             return false;
         }
-        roomEquipment roomEquipment = roomEquipmentRepository.findByRoom_IdAndEquipmentName(roomid, equipment_name);
+        roomEquipment roomEquipment = (roomEquipment) roomEquipmentRepository.findByRoom_NameAndEquipmentName(room_name, equipment_name);
         roomEquipment.setStatus(status);
         roomEquipmentRepository.save(roomEquipment);
         return true;
     }
 
     @Override
-    public boolean deleteRoomEquipment(int roomid, String equipment_name, int quantity) {
-        room room = roomRepository.findById(roomid);
+    public boolean deleteRoomEquipment(String room_name, String equipment_name) {
+        room room = roomRepository.findByName(room_name);
         if (room == null) {
             return false;
         }
-        roomEquipment roomEquipment = roomEquipmentRepository.findByRoom_IdAndEquipmentName(roomid, equipment_name);
+        roomEquipment roomEquipment = (roomEquipment) roomEquipmentRepository.findByRoom_NameAndEquipmentName(room_name, equipment_name);
         if (roomEquipment != null) {
             roomEquipmentRepository.delete(roomEquipment);
             return true;
