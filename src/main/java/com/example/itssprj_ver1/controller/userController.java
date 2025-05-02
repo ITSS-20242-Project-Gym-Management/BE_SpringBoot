@@ -3,6 +3,8 @@ package com.example.itssprj_ver1.controller;
 import com.example.itssprj_ver1.model.users;
 import com.example.itssprj_ver1.repository.userRepository;
 import com.example.itssprj_ver1.service.customerService;
+import com.example.itssprj_ver1.service.managerService;
+import com.example.itssprj_ver1.service.ptService;
 import com.example.itssprj_ver1.service.userService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ public class userController {
     private final userService userService;
     private final customerService customerService;
     private final userRepository userRepository;
+    private final managerService managerService;
+    private final ptService ptService;
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> request) {
@@ -73,7 +77,17 @@ public class userController {
                 response.put("status", "Thêm tài khoản thành công");
             }
             users user = userRepository.findByUsername(username);
-            if (customerService.addCustomer(firstname, lastname, email, phone, gender, age, user.getId())) {
+
+            boolean checkadd = true;
+            if(roleid == 4){
+                checkadd = customerService.addCustomer(firstname, lastname, email, phone, gender, age, user.getId());
+            }else if(roleid == 3){
+                checkadd = ptService.addPT(firstname, lastname, email, phone,gender, age, user.getId());
+            }else if(roleid == 2) {
+                checkadd = managerService.addManager(firstname, lastname, email, phone, gender, age, user.getId());
+            }
+
+            if (checkadd) {
                 response.put("status", "Thêm người dùng thành công");
                 return ResponseEntity.ok(response);
             } else {
