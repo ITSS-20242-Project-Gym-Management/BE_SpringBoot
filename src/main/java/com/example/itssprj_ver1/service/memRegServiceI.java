@@ -15,6 +15,8 @@ public interface memRegServiceI {
 
     List<Map<String, Object>> getMemberRegByCreateAt(Date createAt);
 
+    List<Map<String, Object>> getMemberRegByStatusAndCreateAt(String status, Date createAt);
+
     List<Map<String, Object>> getAllMemberReg();
 
 }
