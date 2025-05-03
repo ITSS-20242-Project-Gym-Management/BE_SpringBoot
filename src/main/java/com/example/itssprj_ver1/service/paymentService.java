@@ -16,8 +16,8 @@ public class paymentService implements paymentServiceI {
     @Autowired
     private paymentRepository paymentRepository;
     @Override
-    public boolean addPayment(String cufirstname, String culastname, String method, Float amount, Boolean paid) {
-        customer customer = customerRepository.findByFirstnameAndLastname(cufirstname, culastname);
+    public boolean addPayment(String phone, String method, Float amount, Boolean paid) {
+        customer customer = customerRepository.findByPhone(phone);
         if (customer == null) {
             return false; // Customer not found
         }
