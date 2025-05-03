@@ -46,4 +46,26 @@ public class userService implements userServiceI {
         }
         return false;
     }
+
+    @Override
+    public boolean updateUser(String username, String password) {
+        users user = userRepository.findByUsername(username);
+        if (user != null) {
+            user.setPassword(password);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteUser(String username) {
+        users user = userRepository.findByUsername(username);
+        if (user != null ) {
+            user.setDeleted(true);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
 }

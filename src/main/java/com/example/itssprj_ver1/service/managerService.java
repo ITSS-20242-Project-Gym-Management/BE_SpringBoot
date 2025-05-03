@@ -40,4 +40,14 @@ public class managerService implements managerServiceI{
             return false;
         }
     }
+
+    @Override
+    public boolean deleteManager(int id) {
+        Optional<staff> staff = staffRepository.findById(id);
+        if (staff.isPresent()) {
+            staffRepository.delete(staff.get());
+            return true;
+        }
+        return false;
+    }
 }

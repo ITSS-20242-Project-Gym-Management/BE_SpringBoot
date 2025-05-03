@@ -1,7 +1,6 @@
 package com.example.itssprj_ver1.service;
 
 import com.example.itssprj_ver1.model.customer;
-import com.example.itssprj_ver1.model.roomEquipment;
 import com.example.itssprj_ver1.model.users;
 import com.example.itssprj_ver1.repository.customerRepository;
 import com.example.itssprj_ver1.repository.userRepository;
@@ -51,15 +50,38 @@ public class customerService implements customerServiceI {
         List<Map<String, Object>> mappedResults = new ArrayList<>();
         for (customer result : customers) {
             Map<String, Object> response = new HashMap<>();
-            response.put("customerId", result.getId());
-            response.put("customerName", result.getFirstname() + " " + result.getLastname());
-            response.put("customerAge", result.getAge());
-            response.put("customerGender", result.getGender());
-            response.put("customerPhone", result.getPhone());
-            response.put("customerEmail", result.getEmail());
-            response.put("infoUpdateAt", result.getUpdateAt());
-            mappedResults.add(response);
+            if (result.getUserid().isDeleted() == true) {
+                continue;
+            } else {
+                response.put("customerId", result.getId());
+                response.put("customerName", result.getFirstname() + " " + result.getLastname());
+                response.put("customerAge", result.getAge());
+                response.put("customerGender", result.getGender());
+                response.put("customerPhone", result.getPhone());
+                response.put("customerEmail", result.getEmail());
+                response.put("infoUpdateAt", result.getUpdateAt());
+                mappedResults.add(response);
+            }
         }
         return mappedResults;
+    }
+
+    @Override
+    public boolean updateCustomer(int customerid, String firstname, String lastname, String email, String phone, int age) {
+        Optional<customer> customer = customerRepository.findById(customerid);
+        if (customer.isEmpty()) {
+            return false;
+        }
+        try {
+            customer.get().setFirstname(firstname);
+            customer.get().setLastname(lastname);
+            customer.get().setEmail(email);
+            customer.get().setPhone(phone);
+            customer.get().setAge(age);
+            customerRepository.save(customer.get());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
