@@ -8,4 +8,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface staffRepository extends JpaRepository<staff, Integer> {
     staff findByUserid(users userid);
+    
+    staff findByFirstnameAndLastname(String ptfirstname, String ptlastname);
+
+    List<staff> findByUserid_Id(Integer useridId);
+
+    staff findStaffByUserid_Id(Integer id);
 }
