@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 
+
 @Entity
 @Table(name="review")
 @AllArgsConstructor
@@ -17,7 +18,7 @@ import java.sql.Date;
 public class review {
 
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @ManyToOne

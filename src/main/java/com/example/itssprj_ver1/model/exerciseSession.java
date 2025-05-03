@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+
 @Entity
 @Table(name="exerciseSession")
 @AllArgsConstructor
@@ -31,10 +32,10 @@ public class exerciseSession {
     @Column(name = "ExerciseType",nullable = true)
     private String ExerciseType;
 
-    @Column(name = "beginAt",nullable = true)//sửa not null -> null
+    @Column(name = "beginAt",nullable = true)
     private LocalDateTime beginAt;
 
-    @Column(name = "endAt",nullable = true)//sửa not null -> null
+    @Column(name = "endAt",nullable = true)
     private LocalDateTime endAt;
 
     @Column(name = "description",nullable = true)

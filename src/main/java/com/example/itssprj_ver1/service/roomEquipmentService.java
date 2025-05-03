@@ -43,7 +43,7 @@ public class roomEquipmentService implements roomEquipmentServiceI {
         if (room == null) {
             return false;
         }
-        roomEquipment roomEquipment = (roomEquipment) roomEquipmentRepository.findByRoom_NameAndEquipmentName(room_name, equipment_name);
+        roomEquipment roomEquipment =  roomEquipmentRepository.findByRoom_NameAndEquipmentName(room_name, equipment_name);
         roomEquipment.setStatus(status);
         roomEquipmentRepository.save(roomEquipment);
         return true;
@@ -55,7 +55,7 @@ public class roomEquipmentService implements roomEquipmentServiceI {
         if (room == null) {
             return false;
         }
-        roomEquipment roomEquipment = (roomEquipment) roomEquipmentRepository.findByRoom_NameAndEquipmentName(room_name, equipment_name);
+        roomEquipment roomEquipment = roomEquipmentRepository.findByRoom_NameAndEquipmentName(room_name, equipment_name);
         if (roomEquipment != null) {
             roomEquipmentRepository.delete(roomEquipment);
             return true;
@@ -65,7 +65,7 @@ public class roomEquipmentService implements roomEquipmentServiceI {
 
     @Override
     public List<Map<String, Object>> getRoomEquipmentByRoomName(String room_name) {
-        List<roomEquipment> results = roomEquipmentRepository.findByRoom_Name(room_name);
+        List<roomEquipment> results = roomEquipmentRepository.findAllByRoom_Name(room_name);
         if (results == null || results.isEmpty()) {
             return new ArrayList<>();
         }
@@ -84,7 +84,7 @@ public class roomEquipmentService implements roomEquipmentServiceI {
 
     @Override
     public List<Map<String, Object>> getRoomEquipmentByNameDevice(String roomEquipment) {
-        List<roomEquipment> results = roomEquipmentRepository.findByEquipmentName(roomEquipment);
+        List<roomEquipment> results = roomEquipmentRepository.findAllByEquipmentName(roomEquipment);
         if (results == null || results.isEmpty()) {
             return new ArrayList<>();
         }
@@ -102,7 +102,7 @@ public class roomEquipmentService implements roomEquipmentServiceI {
 
     @Override
     public List<Map<String, Object>> getRoomEquipmentByStatus(String status) {
-        List<roomEquipment> results = roomEquipmentRepository.findByStatus(status);
+        List<roomEquipment> results = roomEquipmentRepository.findAllByStatus(status);
         if (results == null || results.isEmpty()) {
             return new ArrayList<>();
         }
@@ -120,7 +120,7 @@ public class roomEquipmentService implements roomEquipmentServiceI {
 
     @Override
     public List<Map<String, Object>> getRoomEquipmentByRoomNameAndNameDevice(String roomname, String roomEquipment) {
-        List<roomEquipment> results = roomEquipmentRepository.findByRoom_NameAndEquipmentName(roomname, roomEquipment);
+        List<roomEquipment> results = roomEquipmentRepository.findAllByRoom_NameAndEquipmentName(roomname, roomEquipment);
         if (results == null || results.isEmpty()) {
             return new ArrayList<>();
         }
@@ -138,7 +138,7 @@ public class roomEquipmentService implements roomEquipmentServiceI {
 
     @Override
     public List<Map<String, Object>> getRoomEquipmentByRoomNameAndStatus(String roomname, String status) {
-        List<roomEquipment> results = roomEquipmentRepository.findByRoom_NameAndStatus(roomname, status);
+        List<roomEquipment> results = roomEquipmentRepository.findAllByRoom_NameAndStatus(roomname, status);
         if (results == null || results.isEmpty()) {
             return new ArrayList<>();
         }
@@ -156,7 +156,7 @@ public class roomEquipmentService implements roomEquipmentServiceI {
 
     @Override
     public List<Map<String, Object>> getRoomEquipmentByRoomNameAndNameDeviceAndStatus(String roomname, String roomEquipment, String status) {
-        List<roomEquipment> results = roomEquipmentRepository.findByRoom_NameAndEquipmentNameAndStatus(roomname,roomEquipment, status);
+        List<roomEquipment> results = roomEquipmentRepository.findAllByRoom_NameAndEquipmentNameAndStatus(roomname,roomEquipment, status);
         if (results == null || results.isEmpty()) {
             return new ArrayList<>();
         }

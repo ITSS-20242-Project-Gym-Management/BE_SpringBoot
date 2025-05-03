@@ -1,22 +1,25 @@
 package com.example.itssprj_ver1.service;
 
+import com.example.itssprj_ver1.model.customer;
 import com.example.itssprj_ver1.model.memberRegister;
+import com.example.itssprj_ver1.model.membership;
 
-import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
 public interface memRegServiceI {
-    boolean addMemberReg(String cufirstname, String culastname, String namepackage, String status, Date beginAt, Date endAt);
 
-    boolean updateMemberReg(int memberRegId, String status, Date beginAt, Date endAt);
+    memberRegister addMemRegistration(memberRegister newMemReg);
 
-    List<Map<String, Object>> getMemberRegByStatus(String status);
+//    static boolean checkExpiration(memberRegister MemReg);
 
-    List<Map<String, Object>> getMemberRegByCreateAt(Date createAt);
+    void updateMemRegExpiredStatus(memberRegister newMemReg);
 
-    List<Map<String, Object>> getMemberRegByStatusAndCreateAt(String status, Date createAt);
+    memberRegister findMemRegById(Integer id);
 
-    List<Map<String, Object>> getAllMemberReg();
+    List<Map<String, Object>> findMemRegByCustomerId(Integer customerId);
 
+    void requestExtendMembership(memberRegister memReg);
+
+    List<Map<String, Object>> getMembershipByCustomer(customer customer);
 }

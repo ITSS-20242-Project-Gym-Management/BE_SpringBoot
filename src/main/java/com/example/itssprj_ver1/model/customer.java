@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+
 @Entity
 @Table(name="customer")
 @AllArgsConstructor
@@ -45,6 +46,6 @@ public class customer {
     private String phone;
 
     @CreationTimestamp
-    @Column(nullable = true) //để thành null
+    @Column(nullable = false)
     private LocalDateTime updateAt;
 }
