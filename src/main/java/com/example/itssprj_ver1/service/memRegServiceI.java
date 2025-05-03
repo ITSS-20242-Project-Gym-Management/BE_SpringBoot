@@ -1,6 +1,8 @@
 package com.example.itssprj_ver1.service;
 
+import com.example.itssprj_ver1.model.customer;
 import com.example.itssprj_ver1.model.memberRegister;
+import com.example.itssprj_ver1.model.membership;
 
 import java.util.List;
 import java.util.Map;
@@ -19,4 +21,5 @@ public interface memRegServiceI {
 
     void requestExtendMembership(memberRegister memReg);
 
+    List<Map<String, Object>> getMembershipByCustomer(customer customer);
 }

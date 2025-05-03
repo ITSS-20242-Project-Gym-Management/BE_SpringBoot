@@ -47,7 +47,8 @@ public class customerController {
 
         try {
 
-            int customerId = Integer.parseInt(request.get("customerId"));
+            int userId = Integer.parseInt(request.get("userId"));
+            int customerId = customerRepository.findById(userId).get().getId();
 
             Optional<customer> customerOpt = customerRepository.findById(customerId);
             if (customerOpt.isPresent()) {
@@ -120,14 +121,15 @@ public class customerController {
 
     //Lay danh sach payment
     //Can kiem tra the token cung dung voi customerID moi thuc hien duoc
-    @GetMapping("/getPayments")
+    @PostMapping("/getPayments")
     public ResponseEntity<Object> getPayments(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
 
         try {
             // Check if the customer exists
 
-            int customerId = Integer.parseInt(request.get("customerId"));
+            int userId = Integer.parseInt(request.get("userId"));
+            int customerId = customerRepository.findById(userId).get().getId();
 
             Optional<customer> customerOpt = customerRepository.findById(customerId);
             if (customerOpt.isPresent()) {
@@ -168,14 +170,15 @@ public class customerController {
 
     //Lay lich tap voi PT
     //Can them TOKEN
-    @GetMapping("/getSessionsWithPT")
+    @PostMapping("/getSessionsWithPT")
     public ResponseEntity<Object> getSessions(@RequestBody Map<String, String> request) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
             // Check if the customer exists
-            int customerId = Integer.parseInt(request.get("customerId"));
+            int userId = Integer.parseInt(request.get("userId"));
+            int customerId = customerRepository.findById(userId).get().getId();
             Optional<customer> customerOpt = customerRepository.findById(customerId);
 
             if (customerOpt.isPresent()) {
@@ -220,13 +223,14 @@ public class customerController {
     }
 
     //Lay thong tin khach hang
-    @GetMapping("/getCustomerInfo")
+    @PostMapping("/getCustomerInfo")
     public ResponseEntity<Object> getCustomerInfo(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
 
         try {
             // Check if the customer exists
-            int customerId = Integer.parseInt(request.get("customerId"));
+            int userId = Integer.parseInt(request.get("userId"));
+            int customerId = customerRepository.findById(userId).get().getId();
             Optional<customer> customerOpt = customerRepository.findById(customerId);
 
             if (customerOpt.isPresent()) {
@@ -251,38 +255,31 @@ public class customerController {
 
     //Xem thong tin cac goi tap
     @GetMapping("/getExercisePackages")
-    public ResponseEntity<Object> getExercisePackages(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Object> getExercisePackages() {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // Check if the customer exists
-            int customerId = Integer.parseInt(request.get("customerId"));
-            Optional<customer> customerOpt = customerRepository.findById(customerId);
 
-            if (customerOpt.isPresent()) {
-                // Get the payments for the customer
-                response.put("status", "Lấy thông tin các gói tập thành công");
-                response.put("data", membershipService.getAllMemberships());
+            // Get the payments for the customer
+            response.put("status", "Lấy thông tin các gói tập thành công");
+            response.put("data", membershipService.getAllMemberships());
+
+            return ResponseEntity.ok(response);
 
 
-                return ResponseEntity.ok(response);
-
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found");
-            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving exercise packages: " + e.getMessage());
         }
     }
 
     //Theo doi thoi han goi tap cua Khach
-    @GetMapping("/getMemberRegistration")
+    @PostMapping("/getMemberRegistration")
     public ResponseEntity<Object> getMemberRegistration(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         try {
             // Check if the customer exists
-            int customerId = Integer.parseInt(request.get("customerId"));
-
+            int userId = Integer.parseInt(request.get("userId"));
+            int customerId = customerRepository.findById(userId).get().getId();
             Optional<customer> customerOpt = customerRepository.findById(customerId);
 
             if (customerOpt.isPresent()) {
@@ -316,8 +313,10 @@ public class customerController {
 
         try {
             // Check if the customer exists
-            int customerId = Integer.parseInt(request.get("customerId"));
-            int memRegId = Integer.parseInt(request.get("memRegId"));
+            int userId = Integer.parseInt(request.get("userId"));
+
+            int customerId = customerRepository.findById(userId).get().getId();
+            int memRegId = memRegRepository.findById(customerId).get().getId();
 
             Optional<customer> customerOpt = customerRepository.findById(customerId);
             Optional<memberRegister> memRegOpt = memRegRepository.findById(memRegId);

@@ -20,4 +20,6 @@ public class membershipService implements membershipServiceI {
         return membershipRepository.findAll();
 
     }
+
+
 }

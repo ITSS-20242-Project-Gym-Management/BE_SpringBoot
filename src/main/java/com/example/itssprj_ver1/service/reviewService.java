@@ -13,8 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class reviewService implements reviewServiceI {
 
-    @Autowired
-    private reviewRepository reviewRepository;
+    private final reviewRepository reviewRepository;
 
     @Override
     public List<review> getReview() {

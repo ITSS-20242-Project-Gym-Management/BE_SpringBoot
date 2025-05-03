@@ -2,6 +2,7 @@ package com.example.itssprj_ver1.service;
 
 import com.example.itssprj_ver1.model.customer;
 import com.example.itssprj_ver1.model.memberRegister;
+import com.example.itssprj_ver1.model.membership;
 import com.example.itssprj_ver1.repository.customerRepository;
 import com.example.itssprj_ver1.repository.memRegRepository;
 import lombok.RequiredArgsConstructor;
@@ -126,5 +127,45 @@ public class memRegService implements memRegServiceI {
         }
     }
 
+    @Override
+    public List<Map<String, Object>> getMembershipByCustomer(customer customer) {
+        try {
+            List<memberRegister> memReg = memRegRepository.findByCustomer(customer);
+
+            if (memReg.isEmpty()) {
+                return null;
+            } else {
+
+                List<Map<String, Object>> memRegList = new ArrayList<>();
+
+                for (memberRegister memRegItem : memReg) {
+                    Map<String, Object> memRegMap = new HashMap<>();
+                    memRegMap.put("registrationId", memRegItem.getId());
+                    memRegMap.put("createAt", memRegItem.getCreateAt());
+                    memRegMap.put("startAt", memRegItem.getBeginAt());
+                    memRegMap.put("endAt", memRegItem.getEndAt());
+                    memRegMap.put("status", memRegItem.getStatus());
+
+                    membership membership = memRegItem.getMembership();
+                    if (membership != null) {
+                        memRegMap.put("membershipName", membership.getName());
+                        memRegMap.put("membershipPrice", membership.getPrice());
+                        memRegMap.put("membershipDescription", membership.getDescription());
+                    }
+
+                    memRegList.add(memRegMap);
+                }
+
+                return memRegList;
+
+
+            }
+
+        }catch(NullPointerException e){
+            return null;
+
+        }
+
+    }
 
 }
