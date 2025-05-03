@@ -14,4 +14,5 @@ public interface memRegRepository extends JpaRepository<memberRegister, Integer>
 
     List<memberRegister> findByCreateAt(Date createAt);
 
+    List<memberRegister> findByStatusAndCreateAt(String status, Date createAt);
 }
