@@ -1,6 +1,5 @@
 package com.example.itssprj_ver1.service;
 
-import com.example.itssprj_ver1.dto.roomdto;
 import com.example.itssprj_ver1.model.room;
 import com.example.itssprj_ver1.repository.roomRepository;
 import lombok.RequiredArgsConstructor;

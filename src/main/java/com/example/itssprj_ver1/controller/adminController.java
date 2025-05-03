@@ -5,10 +5,7 @@ import com.example.itssprj_ver1.model.customer;
 import com.example.itssprj_ver1.model.membership;
 import com.example.itssprj_ver1.repository.membershipRepository;
 import com.example.itssprj_ver1.repository.roomEquipmentRepository;
-import com.example.itssprj_ver1.service.adminService;
-import com.example.itssprj_ver1.service.membershipService;
-import com.example.itssprj_ver1.service.roomEquipmentService;
-import com.example.itssprj_ver1.service.roomService;
+import com.example.itssprj_ver1.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +24,7 @@ public class adminController {
     private final membershipRepository membershipRepository;
     private final roomService roomService;
     private final roomEquipmentService roomEquipmentService;
+    private final paymentService paymentService;
 
     @GetMapping("/getCustomerList")
     public ResponseEntity<Object> getCustomerList() {
@@ -469,5 +467,36 @@ public class adminController {
 
         }
     }
+
+
+    @PostMapping("/revenueByYear")
+    public ResponseEntity<Object> getRevenueByYear(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+
+            int year = Integer.parseInt(request.get("year"));
+
+            List<Map<String, Object>> revenueData = paymentService.totalRevenueByYear(year);
+
+            if (revenueData.isEmpty()) {
+                response.put("status", "Khong co doanh thu nao");
+                return ResponseEntity.status(404).body(response);
+
+            }
+
+            response.put("status", "Lay doanh thu thanh cong");
+            response.put("data", revenueData);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+
+        }
+    }
+
+//    @PostMapping("/revenueByMonth")
+
 
 }
