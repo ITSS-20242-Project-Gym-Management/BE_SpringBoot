@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.sql.Date;
 
@@ -304,7 +305,7 @@ public class managerController {
                 return ResponseEntity.status(400).body(response);
             }
 
-            int sessionid = Integer.parseInt(request.get("sessionid"));
+            int sessionid = Integer.parseInt(request.get(" "));
             String cufirstname = request.get("cufirstname");
             String culastname = request.get("culastname");
             String ptfirstname = request.get("ptfirstname");
@@ -335,13 +336,12 @@ public class managerController {
                 response.put("message", "Token is missing or invalid");
                 return ResponseEntity.badRequest().body(response);
             }
-            String cufirstname = request.get("cufirstname");
-            String culastname = request.get("culastname");
+            String phone = request.get("phone");
             String paymentMethod = request.get("paymentMethod");
             Float amount = Float.parseFloat(request.get("amount"));
             Boolean paid = Boolean.parseBoolean(request.get("paid"));
 
-            if (paymentService.addPayment(cufirstname, culastname, paymentMethod, amount, paid)) {
+            if (paymentService.addPayment(phone, paymentMethod, amount, paid)) {
                 response.put("status", "Thêm thanh toán thành công");
                 return ResponseEntity.ok(response);
             } else {
@@ -380,19 +380,11 @@ public class managerController {
             try {
                 if (request.containsKey("beginAt") && !request.get("beginAt").isEmpty()) {
                     String beginAtStr = request.get("beginAt");
-                    // Nếu cần chuyển đổi định dạng từ dd/MM/yyyy sang yyyy-MM-dd
-                    SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
-                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    java.util.Date parsedDate = inputFormat.parse(beginAtStr);
-                    beginAt = Date.valueOf(outputFormat.format(parsedDate));
+                    beginAt = Date.valueOf(beginAtStr);
                 }
                 if (request.containsKey("endAt") && !request.get("endAt").isEmpty()) {
-                    // Tương tự cho endAt
                     String endAtStr = request.get("endAt");
-                    SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
-                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    java.util.Date parsedDate = inputFormat.parse(endAtStr);
-                    endAt = Date.valueOf(outputFormat.format(parsedDate));
+                    endAt = Date.valueOf(endAtStr);
                 }
             } catch (Exception e) {
                 throw new IllegalArgumentException("Định dạng ngày tháng không hợp lệ: " + e.getMessage());
@@ -426,7 +418,7 @@ public class managerController {
             }
 
             // Lấy thông tin từ request
-            int memberRegId = Integer.parseInt(request.get("memberRegId"));
+            int memberRegId = Integer.parseInt(request.get("id"));
             String status = request.get("status");
 
             // Parse dates from request
@@ -435,19 +427,11 @@ public class managerController {
             try {
                 if (request.containsKey("beginAt") && !request.get("beginAt").isEmpty()) {
                     String beginAtStr = request.get("beginAt");
-                    // Nếu cần chuyển đổi định dạng từ dd/MM/yyyy sang yyyy-MM-dd
-                    SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
-                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    java.util.Date parsedDate = inputFormat.parse(beginAtStr);
-                    beginAt = Date.valueOf(outputFormat.format(parsedDate));
+                    beginAt = Date.valueOf(beginAtStr);
                 }
                 if (request.containsKey("endAt") && !request.get("endAt").isEmpty()) {
-                    // Tương tự cho endAt
                     String endAtStr = request.get("endAt");
-                    SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
-                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    java.util.Date parsedDate = inputFormat.parse(endAtStr);
-                    endAt = Date.valueOf(outputFormat.format(parsedDate));
+                    endAt = Date.valueOf(endAtStr);
                 }
             } catch (Exception e) {
                 throw new IllegalArgumentException("Định dạng ngày tháng không hợp lệ: " + e.getMessage());
@@ -455,10 +439,10 @@ public class managerController {
 
             // Gọi service để thêm member register
             if (memRegService.updateMemberReg(memberRegId, status, beginAt, endAt)) {
-                response.put("status", "Gia hạn gói tập cho khách thành công");
+                response.put("status", "Cập nhật gia hạn thành công");
                 return ResponseEntity.ok(response);
             } else {
-                response.put("status", "Gia hạn gói tập cho khách không thành công");
+                response.put("status", "Cập nhật không thành công");
                 return ResponseEntity.status(400).body(response);
             }
         } catch (Exception e) {
@@ -468,10 +452,9 @@ public class managerController {
         }
     }
 
-    @GetMapping("/getMemberRegister")
+    @PostMapping("/getMemberRegister")
     public ResponseEntity<Map<String, Object>> getMemberRegister(@RequestHeader(value = "token", required = false) String token,
-                                                                 @RequestParam(value = "status", required = false) String status,
-                                                                 @RequestParam(value = "createAt", required = false) String createAtStr) {
+                                                                 @RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         try {
             // Kiểm tra token
@@ -481,27 +464,36 @@ public class managerController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Parse dates from request
+            String status = request.get("status");
+            String createAtStr = request.get("createAt");
+
+            // Kiểm tra cả null và chuỗi rỗng
+            boolean hasStatus = status != null && !status.isEmpty();
+            boolean hasCreateAt = false;
             Date createAt = null;
+
             if (createAtStr != null && !createAtStr.isEmpty()) {
                 try {
-                    // Chuyển đổi định dạng từ dd-MM-yyyy sang yyyy-MM-dd
-                    SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
-                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    java.util.Date parsedDate = inputFormat.parse(createAtStr);
-                    createAt = Date.valueOf(outputFormat.format(parsedDate));
+                    createAtStr = createAtStr.trim();
+                    createAt = Date.valueOf(createAtStr);
+                    hasCreateAt = true;
                 } catch (Exception e) {
-                    throw new IllegalArgumentException("Định dạng ngày tháng không hợp lệ: " + e.getMessage());
+                    e.printStackTrace();
+                    System.out.println("Chuỗi ngày gây lỗi: '" + createAtStr + "'");
+                    throw new IllegalArgumentException("Định dạng ngày tháng không hợp lệ (phải là yyyy-MM-dd): " + e.getMessage());
                 }
             }
 
             List<Map<String, Object>> memberRegisters = new ArrayList<>();
 
-            if (status != null && !status.isEmpty() && createAt == null) {
+            if (hasStatus && !hasCreateAt) {
                 memberRegisters = memRegService.getMemberRegByStatus(status);
-            } else if (createAt != null && status == null) {
+            } else if (hasCreateAt && !hasStatus) {
                 memberRegisters = memRegService.getMemberRegByCreateAt(createAt);
-            } else if (createAt == null && status == null) {
+            } else if(hasStatus && hasCreateAt) {
+                memberRegisters = memRegService.getMemberRegByStatusAndCreateAt(status, createAt);
+            } else {
+                // Cả hai đều không có
                 memberRegisters = memRegService.getAllMemberReg();
             }
 
@@ -511,16 +503,14 @@ public class managerController {
                 return ResponseEntity.ok(response);
             } else {
                 response.put("status", "Không có dữ liệu gia hạn");
-                response.put("list", new ArrayList<>());  // Return empty list instead of null
                 return ResponseEntity.ok(response);  // Return 200 OK with empty list
             }
         } catch (Exception e) {
-            e.printStackTrace();  // For debugging
+            e.printStackTrace();
             response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }
-
     @GetMapping("/getMembership")
     public ResponseEntity<Map<String, Object>> getMembership(@RequestHeader(value = "token", required = false) String token) {
         Map<String, Object> response = new HashMap<>();
