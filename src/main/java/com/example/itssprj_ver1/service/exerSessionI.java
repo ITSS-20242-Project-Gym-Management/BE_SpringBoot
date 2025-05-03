@@ -3,6 +3,7 @@ package com.example.itssprj_ver1.service;
 import com.example.itssprj_ver1.model.exerciseSession;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface exerSessionI {
@@ -11,7 +12,7 @@ public interface exerSessionI {
     boolean addSession(String cufirstname,String culastname, String ptfirstname,String ptlastname, String exerciseType);
     boolean updateSession(int sessionid,String cufirstname, String culastname, String ptfirstname, String ptlastname, String exerciseType);
      
-     List<exerciseSession> getAllSessions();
+     List<exerciseSession> getAllSession();
      Optional<exerciseSession> getSessionById(Integer id);
      List<exerciseSession> getSessionByCustomerId(Integer customerId);
      List<exerciseSession> getSessionsByTrainerId(Integer trainerId);

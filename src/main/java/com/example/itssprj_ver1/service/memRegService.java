@@ -5,8 +5,9 @@ import com.example.itssprj_ver1.model.memberRegister;
 import com.example.itssprj_ver1.model.membership;
 import com.example.itssprj_ver1.repository.customerRepository;
 import com.example.itssprj_ver1.repository.memRegRepository;
+import com.example.itssprj_ver1.repository.membershipRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,8 +48,8 @@ public class memRegService implements memRegServiceI {
                     .membership(membership)
                     .createAt(new Date(System.currentTimeMillis())) // Current date
                     .status(status)
-                    .beginAt(beginAt)
-                    .endAt(endAt)
+                    .beginAt(beginAt.toLocalDate())
+                    .endAt(endAt.toLocalDate())
                     .build();
 
             // Save to database
@@ -71,8 +73,8 @@ public class memRegService implements memRegServiceI {
 
             // Update fields
             existingMemberReg.setStatus(status);
-            existingMemberReg.setBeginAt(beginAt);
-            existingMemberReg.setEndAt(endAt);
+            existingMemberReg.setBeginAt(beginAt.toLocalDate());
+            existingMemberReg.setEndAt(endAt.toLocalDate());
 
             // Save updated memberRegister to database
             memRegRepository.save(existingMemberReg);
@@ -165,10 +167,6 @@ public class memRegService implements memRegServiceI {
             return null;
         }
     }
-    @Override
-    public memberRegister addMemRegistration(memberRegister newMemReg) {
-        return memRegRepository.save(newMemReg);
-    }
 
     public static boolean checkExpired(memberRegister MemReg) {
         LocalDate currentDate = LocalDate.now();
@@ -197,6 +195,7 @@ public class memRegService implements memRegServiceI {
 
     @Override
     public memberRegister findMemRegById(Integer id) {
+
         return null;
     }
 

@@ -85,7 +85,3 @@ public class customerService implements customerServiceI {
         }
     }
 }
-package com.example.itssprj_ver1.service;
-
-public class customerService {
-}

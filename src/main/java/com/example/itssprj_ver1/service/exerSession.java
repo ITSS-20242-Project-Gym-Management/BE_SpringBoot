@@ -3,15 +3,16 @@ package com.example.itssprj_ver1.service;
 
 import com.example.itssprj_ver1.model.customer;
 import com.example.itssprj_ver1.model.exerciseSession;
+import com.example.itssprj_ver1.model.staff;
 import com.example.itssprj_ver1.repository.customerRepository;
 import com.example.itssprj_ver1.repository.exerSessionRepository;
+import com.example.itssprj_ver1.repository.staffRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -116,7 +117,7 @@ public class exerSession implements exerSessionI{
     }
 
     @Override
-    public List<exerciseSession> getAllSessions() {
+    public List<exerciseSession> getAllSession() {
         return exerSessionRepository.findAll();
     }
 

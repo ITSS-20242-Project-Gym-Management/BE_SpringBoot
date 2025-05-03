@@ -1,9 +1,12 @@
 package com.example.itssprj_ver1.service;
 
 import com.example.itssprj_ver1.exceptions.UserNotFoundException;
+import com.example.itssprj_ver1.model.roles;
 import com.example.itssprj_ver1.model.users;
+import com.example.itssprj_ver1.repository.roleRepository;
 import com.example.itssprj_ver1.repository.userRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +17,7 @@ public class userService implements userServiceI {
 
     private final userRepository userRepository;
     @Autowired
-    private  roleRepository roleRepository;
+    private roleRepository roleRepository;
 
     @Override
     public boolean addUser(String username, String password, int roleid) {

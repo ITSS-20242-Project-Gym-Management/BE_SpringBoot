@@ -9,6 +9,7 @@ import com.example.itssprj_ver1.service.paymentServiceI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.*;
 
 @Service
@@ -17,6 +18,28 @@ public class paymentService implements paymentServiceI {
 
     private final paymentRepository paymentRepository;
     private final customerRepository customerRepository;
+
+    @Override
+    public boolean addPayment(String cufirstname, String culastname, String method, Float amount, Boolean paid) {
+        customer customer = customerRepository.findByFirstnameAndLastname(cufirstname, culastname);
+        if (customer == null) {
+            return false; // Customer not found
+        }
+        try{
+            payment newpayment = payment.builder()
+                    .customer(customer)
+                    .method(method)
+                    .amount(amount)
+                    .paid(paid)
+                    .createAt(new Date(System.currentTimeMillis())) // Sử dụng ngày hiện tại
+                    .build();
+            paymentRepository.save(newpayment);
+            return true; // Payment added successfully
+        }
+        catch (Exception e){
+            return false; // Error occurred while adding payment
+        }
+    }
 
     @Override
     public List<payment> getPayment() {

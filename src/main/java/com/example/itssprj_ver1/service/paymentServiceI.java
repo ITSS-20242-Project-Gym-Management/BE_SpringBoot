@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface paymentServiceI {
-
+    boolean addPayment(String cufirstname, String culastname,String method, Float amount, Boolean paid);
     List<payment> getPayment();
     Optional<payment> getPaymentById(Integer id);
     List<payment> getPaymentByCustomerId(Integer customerId);

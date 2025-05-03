@@ -35,7 +35,7 @@ public class managerController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            List<Map<String, Object>> reviews = reviewService.getReview();
+            List<Map<String, Object>> reviews = reviewService.getReviews();
             if (reviewService.getReview() != null) {
                 response.put("status", "Lấy danh sách review thành công");
                 response.put("data", reviews);

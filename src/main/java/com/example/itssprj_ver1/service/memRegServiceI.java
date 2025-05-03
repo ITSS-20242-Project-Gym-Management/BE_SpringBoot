@@ -2,13 +2,14 @@ package com.example.itssprj_ver1.service;
 
 import com.example.itssprj_ver1.model.customer;
 import com.example.itssprj_ver1.model.memberRegister;
-import com.example.itssprj_ver1.model.membership;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
 public interface memRegServiceI {
-     boolean addMemberReg(String cufirstname, String culastname, String namepackage, String status, Date beginAt, Date endAt);
+
+    boolean addMemberReg(String cufirstname, String culastname, String namepackage, String status, Date beginAt, Date endAt);
 
     boolean updateMemberReg(int memberRegId, String status, Date beginAt, Date endAt);
 
@@ -18,8 +19,6 @@ public interface memRegServiceI {
 
     List<Map<String, Object>> getAllMemberReg();
 
-
-    memberRegister addMemRegistration(memberRegister newMemReg);
 
 //    static boolean checkExpiration(memberRegister MemReg);
 
