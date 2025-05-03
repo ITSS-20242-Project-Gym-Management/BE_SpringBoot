@@ -16,6 +16,10 @@ public interface userServiceI {
     void deleteUserbyId(int id);
     void deleteUserbyUsername(String username);
 
-
+    //them ms
+    boolean addUser(String username, String password, int roleid);
+    boolean login(String username, String password);
+    boolean updateUser(String username, String password);
+    boolean deleteUser(String username);
 
 }
