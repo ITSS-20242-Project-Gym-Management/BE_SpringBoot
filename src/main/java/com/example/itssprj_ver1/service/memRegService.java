@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -91,83 +91,99 @@ public class memRegService implements memRegServiceI {
 
     @Override
     public List<Map<String, Object>> getMemberRegByStatus(String status) {
-        try {
-            // Get member registrations by status
-            List<memberRegister> memberRegs = memRegRepository.findByStatus(status);
-            
-            // Convert to list of maps with specific values
-            List<Map<String, Object>> result = new ArrayList<>();
-            
-            for (memberRegister memReg : memberRegs) {
-                Map<String, Object> regInfo = new HashMap<>();
-                regInfo.put("id", memReg.getId());
-                regInfo.put("customerFirstname", memReg.getCustomer().getFirstname());
-                regInfo.put("customerLastname", memReg.getCustomer().getLastname());
-                regInfo.put("membershipName", memReg.getMembership().getName());
-                regInfo.put("status", memReg.getStatus());
-                regInfo.put("createAt", memReg.getCreateAt());
-                regInfo.put("beginAt", memReg.getBeginAt());
-                regInfo.put("endAt", memReg.getEndAt());
-                
-                result.add(regInfo);
-            }
-            
-            return result;
-        } catch (Exception e) {
-            e.printStackTrace(); // Log error for debugging
-            return null;
+        List<memberRegister> memberRegs = memRegRepository.findByStatus(status);
+        if (memberRegs == null || memberRegs.isEmpty()) {
+            return null; // No member registrations found
         }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        // Convert to list of maps with specific values
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (memberRegister memReg : memberRegs) {
+            Map<String, Object> regInfo = new HashMap<>();
+            regInfo.put("id", memReg.getId());
+            regInfo.put("customerName", memReg.getCustomer().getFirstname() + " " + memReg.getCustomer().getLastname());
+            regInfo.put("membershipName", memReg.getMembership().getName());
+            regInfo.put("status", memReg.getStatus());
+            regInfo.put("createAt", memReg.getCreateAt().toLocalDate().format(formatter));
+            regInfo.put("beginAt", memReg.getBeginAt().toLocalDate().format(formatter));
+            regInfo.put("endAt", memReg.getEndAt().toLocalDate().format(formatter));
+
+            result.add(regInfo);
+        }
+
+        return result;
     }
 
     @Override
     public List<Map<String, Object>> getMemberRegByCreateAt(Date createAt) {
-        try {
-            List<memberRegister> memberRegs = memRegRepository.findByCreateAt(createAt);
-            // Convert to list of maps with specific values
-            List<Map<String, Object>> result = new ArrayList<>();
-
-            for (memberRegister memReg : memberRegs) {
-                Map<String, Object> regInfo = new HashMap<>();
-                regInfo.put("id", memReg.getId());
-                regInfo.put("customerName", memReg.getCustomer().getFirstname() + memReg.getCustomer().getLastname());
-                regInfo.put("membershipName", memReg.getMembership().getName());
-                regInfo.put("status", memReg.getStatus());
-                regInfo.put("createAt", memReg.getCreateAt());
-                regInfo.put("beginAt", memReg.getBeginAt());
-                regInfo.put("endAt", memReg.getEndAt());
-
-                result.add(regInfo);
-            }
-
-            return result;
-        } catch (Exception e) {
-            e.printStackTrace(); // Log error for debugging
-            return null;
+        List<memberRegister> memberRegs = memRegRepository.findByCreateAt(createAt);
+        if (memberRegs == null || memberRegs.isEmpty()) {
+            return null; // No member registrations found
         }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        // Convert to list of maps with specific values
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (memberRegister memReg : memberRegs) {
+            Map<String, Object> regInfo = new HashMap<>();
+            regInfo.put("id", memReg.getId());
+            regInfo.put("customerName", memReg.getCustomer().getFirstname() + " " + memReg.getCustomer().getLastname());
+            regInfo.put("membershipName", memReg.getMembership().getName());
+            regInfo.put("status", memReg.getStatus());
+            regInfo.put("createAt", memReg.getCreateAt().toLocalDate().format(formatter));
+            regInfo.put("beginAt", memReg.getBeginAt().toLocalDate().format(formatter));
+            regInfo.put("endAt", memReg.getEndAt().toLocalDate().format(formatter));
+
+            result.add(regInfo);
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<Map<String, Object>> getMemberRegByStatusAndCreateAt(String status, Date createAt) {
+        List<memberRegister> memberRegs = memRegRepository.findByStatusAndCreateAt(status, createAt);
+        if (memberRegs == null || memberRegs.isEmpty()) {
+            return null; // No member registrations found
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        // Convert to list of maps with specific values
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (memberRegister memReg : memberRegs) {
+            Map<String, Object> regInfo = new HashMap<>();
+            regInfo.put("id", memReg.getId());
+            regInfo.put("customerName", memReg.getCustomer().getFirstname() + " " + memReg.getCustomer().getLastname());
+            regInfo.put("membershipName", memReg.getMembership().getName());
+            regInfo.put("status", memReg.getStatus());
+            regInfo.put("createAt", memReg.getCreateAt().toLocalDate().format(formatter));
+            regInfo.put("beginAt", memReg.getBeginAt().toLocalDate().format(formatter));
+            regInfo.put("endAt", memReg.getEndAt().toLocalDate().format(formatter));
+
+            result.add(regInfo);
+        }
+        return result;
     }
 
     @Override
     public List<Map<String, Object>> getAllMemberReg() {
-        try {
-            List<memberRegister> allMemberRegs = memRegRepository.findAll();
-            List<Map<String, Object>> memberRegisters = new ArrayList<>();
-            if (allMemberRegs != null) {
-                memberRegisters = allMemberRegs.stream().map(memReg -> {
-                    Map<String, Object> result = new HashMap<>();
-                    result.put("id", memReg.getId());
-                    result.put("customerName", memReg.getCustomer().getFirstname() + memReg.getCustomer().getLastname());
-                    result.put("membershipName", memReg.getMembership().getName());
-                    result.put("status", memReg.getStatus());
-                    result.put("createAt", memReg.getCreateAt());
-                    result.put("beginAt", memReg.getBeginAt());
-                    result.put("endAt", memReg.getEndAt());
-                    return result;
-                }).collect(Collectors.toList());
-            }
-            return memberRegisters;
-        } catch (Exception e) {
-            e.printStackTrace(); // Log error for debugging
-            return null;
+        List<memberRegister> allMemberRegs = memRegRepository.findAll();
+        if (allMemberRegs == null || allMemberRegs.isEmpty()) {
+            return null; // No member registrations found
         }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        List<Map<String, Object>> memberRegisters = new ArrayList<>();
+        for (memberRegister memReg : allMemberRegs) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("id", memReg.getId());
+            result.put("customerName", memReg.getCustomer().getFirstname() + " " + memReg.getCustomer().getLastname());
+            result.put("membershipName", memReg.getMembership().getName());
+            result.put("status", memReg.getStatus());
+            result.put("createAt", memReg.getCreateAt().toLocalDate().format(formatter));
+            result.put("beginAt", memReg.getBeginAt().toLocalDate().format(formatter));
+            result.put("endAt", memReg.getEndAt().toLocalDate().format(formatter));
+            memberRegisters.add(result);
+        }
+        return memberRegisters;
     }
 }
