@@ -3,6 +3,7 @@ package com.example.itssprj_ver1.service;
 import com.example.itssprj_ver1.model.users;
 
 import java.util.List;
+import java.util.Map;
 
 public interface userServiceI {
     users addUser(users User);
@@ -21,5 +22,5 @@ public interface userServiceI {
     boolean login(String username, String password);
     boolean updateUser(String username, String password);
     boolean deleteUser(String username);
-
+    List<Map<String,Object>> getAllUsers();
 }
