@@ -1,6 +1,7 @@
 package com.example.itssprj_ver1.service;
 
 
+import com.example.itssprj_ver1.dto.ErrorResponse;
 import com.example.itssprj_ver1.model.customer;
 import com.example.itssprj_ver1.model.exerciseSession;
 import com.example.itssprj_ver1.model.staff;
@@ -9,8 +10,10 @@ import com.example.itssprj_ver1.repository.exerSessionRepository;
 import com.example.itssprj_ver1.repository.staffRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -153,17 +156,110 @@ public class exerSession implements exerSessionI{
 
     @Override
     public List<exerciseSession> getSessionsByTrainerId(Integer trainerId) {
-        return null;
+        staff foundTrainer = staffRepository.findById(trainerId)
+                .orElseThrow(() -> new RuntimeException("Trainer not found with id: " + trainerId));
+
+        // Find all sessions
+        List<exerciseSession> sessions = exerSessionRepository.findAll();
+        List<exerciseSession> trainerSessions = new ArrayList<>();
+
+        for (exerciseSession session : sessions) {
+            if (session.getStaff().getId().equals(trainerId)) { // Filtering by trainer ID
+                trainerSessions.add(session);
+            }
+        }
+
+        return trainerSessions;
     }
 
     @Override
-    public exerciseSession createSession(exerciseSession newSession) {
-        return null;
+    public ResponseEntity<?> createSession(
+            Integer trainerId, Integer customerId, String exerciseType,
+            LocalDateTime beginAt, LocalDateTime endAt, String description) {
+
+        // Find Trainer
+        Optional<staff> trainerOpt = staffRepository.findById(trainerId);
+        if (trainerOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Trainer not found", 400));
+        }
+
+        // Find Customer
+        Optional<customer> customerOpt = customerRepository.findById(customerId);
+        if (customerOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Customer not found", 400));
+        }
+
+        // Check for time conflicts
+        boolean sessionExists = exerSessionRepository.existsByStaffAndTimeOverlap(trainerOpt.get(), beginAt, endAt);
+        if (sessionExists) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Trainer already has a session at this time", 400));
+        }
+
+        sessionExists = exerSessionRepository.existsByCustomerAndTimeOverlap(customerOpt.get(), beginAt, endAt);
+        if (sessionExists) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Customer already has a session at this time", 400));
+        }
+
+        // Create Workout Session
+        exerciseSession session = exerciseSession.builder()
+                .staff(trainerOpt.get())
+                .customer(customerOpt.get())
+                .ExerciseType(exerciseType)
+                .beginAt(beginAt)
+                .endAt(endAt)
+                .description(description)
+                .build();
+
+        return ResponseEntity.ok(exerSessionRepository.save(session));
     }
 
     @Override
-    public exerciseSession updateSession(Integer id, exerciseSession updatedSession) {
-        return null;
+    public ResponseEntity<?> updateSession(
+            Integer sessionId, Integer trainerId, Integer customerId,
+            String exerciseType, LocalDateTime beginAt, LocalDateTime endAt,
+            String description
+    ) {
+        // Find the existing session
+        Optional<exerciseSession> existingSessionOpt = exerSessionRepository.findById(sessionId);
+        if (existingSessionOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Workout session not found", 400));
+        }
+
+        exerciseSession existingSession = existingSessionOpt.get();
+
+        System.out.println(existingSession);
+        // Find Trainer
+        Optional<staff> trainerOpt = staffRepository.findById(trainerId);
+        if (trainerOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Trainer not found", 400));
+        }
+
+        // Find Customer
+        Optional<customer> customerOpt = customerRepository.findById(customerId);
+        if (customerOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Customer not found", 400));
+        }
+
+        // Check for time conflicts
+        boolean sessionExists = exerSessionRepository.existsByStaffAndTimeOverlap(trainerOpt.get(), beginAt, endAt);
+        if (sessionExists) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Trainer already has a session at this time", 400));
+        }
+
+        sessionExists = exerSessionRepository.existsByCustomerAndTimeOverlap(customerOpt.get(), beginAt, endAt);
+        if (sessionExists) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Customer already has a session at this time", 400));
+        }
+
+        // Update fields
+        existingSession.setExerciseType(exerciseType);
+        existingSession.setBeginAt(beginAt);
+        existingSession.setEndAt(endAt);
+        existingSession.setDescription(description);
+
+        // Save the updated session
+        exerciseSession updatedSession = exerSessionRepository.save(existingSession);
+        return ResponseEntity.ok(updatedSession);
     }
 
     @Override

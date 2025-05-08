@@ -1,7 +1,9 @@
 package com.example.itssprj_ver1.service;
 
+import com.example.itssprj_ver1.model.customer;
 import com.example.itssprj_ver1.model.staff;
 import com.example.itssprj_ver1.model.users;
+import com.example.itssprj_ver1.repository.exerSessionRepository;
 import com.example.itssprj_ver1.repository.staffRepository;
 import com.example.itssprj_ver1.repository.userRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,9 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class ptService implements ptServiceI {
+
+    @Autowired
+    private exerSessionRepository exerSessionRepository;
     @Autowired
     private staffRepository staffRepository;
     @Autowired
@@ -57,5 +62,10 @@ public class ptService implements ptServiceI {
             staffMap.add(map);
         }
         return staffMap;
+    }
+
+    @Override
+    public List<customer> customerListByTrainer(Integer trainerId) {
+        return exerSessionRepository.findCustomer(trainerId);
     }
 }
