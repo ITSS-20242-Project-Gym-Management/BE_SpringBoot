@@ -287,7 +287,7 @@ public class managerController {
     }
 
     @PostMapping("/updateExercise")
-    public ResponseEntity<Map<String, Object>> updateExerciseExerciseSession(@RequestHeader(value = "token", required = false) String token,
+    public ResponseEntity<Map<String, Object>> updateExerciseSession(@RequestHeader(value = "token", required = false) String token,
                                                                              @RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         try {
