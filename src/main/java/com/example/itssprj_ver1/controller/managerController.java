@@ -324,7 +324,7 @@ public class managerController {
         }
     }
 
-    @PostMapping("addPayment")
+   @PostMapping("addPayment")
     public ResponseEntity<Map<String, Object>> addPayment(@RequestHeader(value = "token", required = false) String token,
                                                           @RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
@@ -335,13 +335,12 @@ public class managerController {
                 response.put("message", "Token is missing or invalid");
                 return ResponseEntity.badRequest().body(response);
             }
-            String cufirstname = request.get("cufirstname");
-            String culastname = request.get("culastname");
+            String phone = request.get("phone");
             String paymentMethod = request.get("paymentMethod");
             Float amount = Float.parseFloat(request.get("amount"));
             Boolean paid = Boolean.parseBoolean(request.get("paid"));
 
-            if (paymentService.addPayment(cufirstname, culastname, paymentMethod, amount, paid)) {
+            if (paymentService.addPayment(phone , paymentMethod, amount, paid)) {
                 response.put("status", "Thêm thanh toán thành công");
                 return ResponseEntity.ok(response);
             } else {
