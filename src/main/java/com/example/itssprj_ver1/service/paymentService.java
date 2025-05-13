@@ -20,8 +20,8 @@ public class paymentService implements paymentServiceI {
     private final customerRepository customerRepository;
 
     @Override
-    public boolean addPayment(String cufirstname, String culastname, String method, Float amount, Boolean paid) {
-        customer customer = customerRepository.findByFirstnameAndLastname(cufirstname, culastname);
+    public boolean addPayment(String phone, String method, Float amount, Boolean paid) {
+        customer customer = customerRepository.findAllByPhone(phone);
         if (customer == null) {
             return false; // Customer not found
         }
