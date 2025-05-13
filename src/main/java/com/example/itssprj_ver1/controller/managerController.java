@@ -368,8 +368,7 @@ public class managerController {
             }
 
             // Lấy thông tin từ request
-            String cufirstname = request.get("cufirstname");
-            String culastname = request.get("culastname");
+            String phone = request.get("phone");
             String namepackage = request.get("namepackage");
             String status = request.get("status");
 
@@ -398,7 +397,7 @@ public class managerController {
             }
 
             // Gọi service để thêm member register
-            if (memRegService.addMemberReg(cufirstname, culastname, namepackage, status, beginAt, endAt)) {
+            if (memRegService.addMemberReg(phone, namepackage, status, beginAt, endAt)) {
                 response.put("status", "Đăng ký gói tập thành công");
                 return ResponseEntity.ok(response);
             } else {
