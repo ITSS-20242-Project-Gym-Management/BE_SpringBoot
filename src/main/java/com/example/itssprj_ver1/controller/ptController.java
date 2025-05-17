@@ -40,11 +40,17 @@ public class ptController {
     public ResponseEntity<ResponseEntity<?>> addWorkoutSession(@RequestBody Map<String, Object> request) {
         Integer trainerId = (Integer) request.get("trainerId");
         Integer customerId = (Integer) request.get("customerId");
+        
+        // Kiểm tra cả hai tham số có thể có
         String exerciseType = (String) request.get("exerciseType");
+        if (exerciseType == null) {
+            exerciseType = (String) request.get("excerciseType");
+        }
+        
         LocalDateTime beginAt = LocalDateTime.parse((String) request.get("beginAt"));
         LocalDateTime endAt = LocalDateTime.parse((String) request.get("endAt"));
         String description = (String) request.get("description");
-
+        System.out.println("exerciseType: " + exerciseType);
         ResponseEntity<?> newSession = exerSession.createSession(trainerId, customerId, exerciseType, beginAt, endAt, description);
 
         return ResponseEntity.ok(newSession);
@@ -60,7 +66,13 @@ public class ptController {
         }
         Integer trainerId = (Integer) request.get("trainerId");
         Integer customerId = (Integer) request.get("customerId");
+        
+        // Kiểm tra cả hai tham số có thể có
         String exerciseType = (String) request.get("exerciseType");
+        if (exerciseType == null) {
+            exerciseType = (String) request.get("excerciseType");
+        }
+        
         LocalDateTime beginAt = LocalDateTime.parse((String) request.get("beginAt"));
         LocalDateTime endAt = LocalDateTime.parse((String) request.get("endAt"));
         String description = (String) request.get("description");

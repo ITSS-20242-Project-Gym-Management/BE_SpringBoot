@@ -76,7 +76,7 @@ public class exerSession implements exerSessionI{
             exerciseSession session = exerciseSession.builder()
                     .customer(customer)
                     .staff(staff)
-                    .ExerciseType(exerciseType)
+                    .exerciseType(exerciseType)
                     .build();
 
             // Lưu buổi tập vào database
@@ -200,17 +200,25 @@ public class exerSession implements exerSessionI{
             return ResponseEntity.badRequest().body(new ErrorResponse("Customer already has a session at this time", 400));
         }
 
-        // Create Workout Session
-        exerciseSession session = exerciseSession.builder()
-                .staff(trainerOpt.get())
-                .customer(customerOpt.get())
-                .ExerciseType(exerciseType)
-                .beginAt(beginAt)
-                .endAt(endAt)
-                .description(description)
-                .build();
+        try {
+            // Create Workout Session - don't set ID to let it be auto-generated
+            exerciseSession session = exerciseSession.builder()
+                    .staff(trainerOpt.get())
+                    .customer(customerOpt.get())
+                    .exerciseType(exerciseType)
+                    .beginAt(beginAt)
+                    .endAt(endAt)
+                    .description(description)
+                    .build();
 
-        return ResponseEntity.ok(exerSessionRepository.save(session));
+            // Save and return the session with generated ID
+            exerciseSession savedSession = exerSessionRepository.save(session);
+            return ResponseEntity.ok(savedSession);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500)
+                    .body(new ErrorResponse("Failed to create exercise session: " + e.getMessage(), 500));
+        }
     }
 
     @Override
@@ -240,18 +248,32 @@ public class exerSession implements exerSessionI{
             return ResponseEntity.badRequest().body(new ErrorResponse("Customer not found", 400));
         }
 
-        // Check for time conflicts
-        boolean sessionExists = exerSessionRepository.existsByStaffAndTimeOverlap(trainerOpt.get(), beginAt, endAt);
-        if (sessionExists) {
+        // Check for time conflicts - không tính buổi tập hiện tại đang cập nhật
+        boolean hasTrainerConflict = exerSessionRepository.findAll().stream()
+            .filter(session -> !session.getId().equals(sessionId)) // Loại trừ buổi tập hiện tại
+            .filter(session -> session.getStaff().getId().equals(trainerId))
+            .anyMatch(session -> 
+                (beginAt.isBefore(session.getEndAt()) && endAt.isAfter(session.getBeginAt()))
+            );
+            
+        if (hasTrainerConflict) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Trainer already has a session at this time", 400));
         }
 
-        sessionExists = exerSessionRepository.existsByCustomerAndTimeOverlap(customerOpt.get(), beginAt, endAt);
-        if (sessionExists) {
+        boolean hasCustomerConflict = exerSessionRepository.findAll().stream()
+            .filter(session -> !session.getId().equals(sessionId)) // Loại trừ buổi tập hiện tại
+            .filter(session -> session.getCustomer().getId().equals(customerId))
+            .anyMatch(session -> 
+                (beginAt.isBefore(session.getEndAt()) && endAt.isAfter(session.getBeginAt()))
+            );
+            
+        if (hasCustomerConflict) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Customer already has a session at this time", 400));
         }
 
         // Update fields
+        existingSession.setStaff(trainerOpt.get());
+        existingSession.setCustomer(customerOpt.get());
         existingSession.setExerciseType(exerciseType);
         existingSession.setBeginAt(beginAt);
         existingSession.setEndAt(endAt);

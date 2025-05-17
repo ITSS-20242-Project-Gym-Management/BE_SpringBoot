@@ -30,7 +30,7 @@ public class exerciseSession {
     private customer customer;
 
     @Column(name = "ExerciseType",nullable = true)
-    private String ExerciseType;
+    private String exerciseType;
 
     @Column(name = "beginAt",nullable = true)
     private LocalDateTime beginAt;
