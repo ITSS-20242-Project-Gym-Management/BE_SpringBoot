@@ -38,31 +38,50 @@ public class roomEquipmentService implements roomEquipmentServiceI {
     }
 
     @Override
-    public boolean updateRoomEquipment(String room_name, String equipment_name, String status) {
+   public boolean updateRoomEquipment(String room_name, String equipment_name, String status) {
         room room = roomRepository.findByName(room_name);
         if (room == null) {
-            return false;
+            return false; // Room not found
         }
-        roomEquipment roomEquipment =  roomEquipmentRepository.findByRoom_NameAndEquipmentName(room_name, equipment_name);
-        roomEquipment.setStatus(status);
-        roomEquipmentRepository.save(roomEquipment);
-        return true;
+
+        // Retrieve the list of matching roomEquipment objects
+        List<roomEquipment> equipmentList = roomEquipmentRepository.findByRoom_NameAndEquipmentName(room_name, equipment_name);
+
+        if (equipmentList == null || equipmentList.isEmpty()) {
+            return false; // No matching equipment found
+        }
+
+        // Update the status for each matching equipment
+        for (roomEquipment equipment : equipmentList) {
+            equipment.setStatus(status);
+            roomEquipmentRepository.save(equipment);
+        }
+
+        return true; // Update successful
     }
 
     @Override
-    public boolean deleteRoomEquipment(String room_name, String equipment_name) {
-        room room = roomRepository.findByName(room_name);
-        if (room == null) {
-            return false;
-        }
-        roomEquipment roomEquipment = roomEquipmentRepository.findByRoom_NameAndEquipmentName(room_name, equipment_name);
-        if (roomEquipment != null) {
-            roomEquipmentRepository.delete(roomEquipment);
-            return true;
-        }
-        return false;
-    }
+   public boolean deleteRoomEquipment(String roomName, String equipmentName) {
+        try {
+            // Retrieve the list of matching roomEquipment objects
+            List<roomEquipment> equipmentList = roomEquipmentRepository.findByRoom_NameAndEquipmentName(roomName, equipmentName);
 
+            // Check if the list is empty
+            if (equipmentList == null || equipmentList.isEmpty()) {
+                return false; // No matching equipment found
+            }
+
+            // Delete each matching equipment
+            for (roomEquipment equipment : equipmentList) {
+                roomEquipmentRepository.delete(equipment);
+            }
+
+            return true; // Deletion successful
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // Deletion failed
+        }
+    }
     @Override
     public List<Map<String, Object>> getRoomEquipmentByRoomName(String room_name) {
         List<roomEquipment> results = roomEquipmentRepository.findAllByRoom_Name(room_name);
