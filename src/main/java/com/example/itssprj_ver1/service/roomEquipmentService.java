@@ -16,11 +16,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class roomEquipmentService implements roomEquipmentServiceI {
-    @Autowired
-    private roomEquipmentRepository roomEquipmentRepository;
 
-    @Autowired
-    private roomRepository roomRepository;
+    private final roomEquipmentRepository roomEquipmentRepository;
+    private final roomRepository roomRepository;
 
     @Override
     public boolean addRoomEquipment(String room_name, String equipment_name, int quantity, String status) {

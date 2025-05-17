@@ -13,7 +13,7 @@ public interface paymentServiceI {
     Optional<payment> getPaymentById(Integer id);
     List<payment> getPaymentByCustomerId(Integer customerId);
     payment createPayment(payment newPayment);
-   boolean updatePaymentFields(Integer paymentId, Boolean paid);
+   //boolean updatePaymentFields(Integer paymentId, Boolean paid);
 //    List<Map<String, Object>> totalRevenueByMonth(int month);
 
     List<Map<String, Object>> totalRevenueByYear(int year);

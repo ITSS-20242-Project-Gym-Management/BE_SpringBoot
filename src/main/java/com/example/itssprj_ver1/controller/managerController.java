@@ -1,5 +1,6 @@
 package com.example.itssprj_ver1.controller;
 
+import com.example.itssprj_ver1.model.payment;
 import com.example.itssprj_ver1.service.*;
 import com.example.itssprj_ver1.repository.userRepository;
 import lombok.RequiredArgsConstructor;
