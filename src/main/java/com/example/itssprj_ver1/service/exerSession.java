@@ -28,7 +28,7 @@ public class exerSession implements exerSessionI{
     @Autowired
     private staffRepository staffRepository;
     
-    @Override
+@Override
     public List<Map<String, Object>> getAllSessions() {
         List<exerciseSession> sessions = exerSessionRepository.findByStaff_Userid_Role_Roleid(3);
         List<Map<String, Object>> sessionsList = new ArrayList<>();
@@ -36,6 +36,7 @@ public class exerSession implements exerSessionI{
 
         for (exerciseSession session : sessions) {
             Map<String, Object> sessionMap = new HashMap<>();
+            sessionMap.put("sessionid", session.getId());
 
             // Thông tin khách hàng
             sessionMap.put("customer_name", session.getCustomer().getFirstname() + " " +
@@ -46,12 +47,15 @@ public class exerSession implements exerSessionI{
                     session.getStaff().getLastname());
 
             // Thời gian
-            sessionMap.put("begin_time", session.getBeginAt().format(formatter));
-            sessionMap.put("end_time", session.getEndAt().format(formatter));
+            LocalDateTime beginAt = session.getBeginAt();
+            LocalDateTime endAt = session.getEndAt();
+
+            sessionMap.put("begin_time", beginAt != null ? beginAt.format(formatter) : "Chưa xác định");
+            sessionMap.put("end_time", endAt != null ? endAt.format(formatter) : "Chưa xác định");
 
             // Loại và mô tả
             sessionMap.put("exercise_type", session.getExerciseType());
-            sessionMap.put("description", session.getDescription());
+            sessionMap.put("description", session.getDescription() != null ? session.getDescription() : "Chưa xác định");
 
             sessionsList.add(sessionMap);
         }
