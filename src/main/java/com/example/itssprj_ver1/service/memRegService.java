@@ -28,10 +28,10 @@ public class memRegService implements memRegServiceI {
     private membershipRepository membershipRepository;
 
     @Override
-    public boolean addMemberReg(String cufirstname, String culastname, String namepackage, String status, Date beginAt, Date endAt) {
+    public boolean addMemberReg(String phone, String namepackage, String status, Date beginAt, Date endAt) {
         try {
             // Find customer by firstname and lastname
-            customer customer = customerRepository.findByFirstnameAndLastname(cufirstname, culastname);
+            customer customer = customerRepository.findAllByPhone(phone);
             if (customer == null) {
                 return false; // Customer not found
             }
