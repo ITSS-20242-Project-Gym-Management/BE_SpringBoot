@@ -352,7 +352,48 @@ public class managerController {
             return ResponseEntity.status(500).body(response);
         }
     }
+ @GetMapping("/getPayments")
+    public ResponseEntity<Map<String, Object>> getPayments(@RequestHeader(value = "token", required = false) String token) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Kiểm tra token
+            if (token == null || token.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Token is missing or invalid");
+                return ResponseEntity.badRequest().body(response);
+            }
 
+            List<Map<String, Object>> paymentList = new ArrayList<>();
+            List<payment> payments = paymentService.getPayment();
+            
+            if (payments != null && !payments.isEmpty()) {
+                for (payment payment : payments) {
+                    Map<String, Object> paymentMap = new HashMap<>();
+                    paymentMap.put("payment_id", payment.getId());
+                    paymentMap.put("customer_id", payment.getCustomer().getId());
+                    paymentMap.put("customer_name", payment.getCustomer().getFirstname() + " " + payment.getCustomer().getLastname());
+                    paymentMap.put("amount", payment.getAmount());
+                    paymentMap.put("payment_method", payment.getMethod());
+                    paymentMap.put("paid", payment.getPaid());
+                    paymentMap.put("created_at", payment.getCreateAt());
+                    
+                    paymentList.add(paymentMap);
+                }
+                
+                response.put("status", "Lấy danh sách thanh toán thành công");
+                response.put("list", paymentList);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "Không có dữ liệu thanh toán");
+                response.put("list", new ArrayList<>());
+                return ResponseEntity.ok(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
     @PostMapping("/addMemberRegister")
     public ResponseEntity<Map<String, Object>> addMemberRegister(
             @RequestHeader(value = "token", required = false) String token,
