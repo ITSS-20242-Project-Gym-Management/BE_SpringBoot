@@ -4,6 +4,7 @@ import com.example.itssprj_ver1.model.*;
 import com.example.itssprj_ver1.repository.customerRepository;
 import com.example.itssprj_ver1.repository.memRegRepository;
 import com.example.itssprj_ver1.repository.membershipRepository;
+import com.example.itssprj_ver1.repository.userRepository;
 import com.example.itssprj_ver1.service.*;
 import org.hibernate.service.NullServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,8 @@ public class    customerController {
     private memRegRepository memRegRepository;
     @Autowired
     private membershipRepository membershipRepository;
+    @Autowired
+    private userRepository userRepository;
 
 
     //Khach hang add review
@@ -48,7 +51,7 @@ public class    customerController {
         try {
 
             int userId = Integer.parseInt(request.get("userId"));
-            int customerId = customerRepository.findById(userId).get().getId();
+            int customerId = customerRepository.findCustomerByUserid_Id(userId).getId();
 
             Optional<customer> customerOpt = customerRepository.findById(customerId);
             if (customerOpt.isPresent()) {
@@ -129,7 +132,7 @@ public class    customerController {
             // Check if the customer exists
 
             int userId = Integer.parseInt(request.get("userId"));
-            int customerId = customerRepository.findById(userId).get().getId();
+            int customerId = customerRepository.findCustomerByUserid_Id(userId).getId();
 
             Optional<customer> customerOpt = customerRepository.findById(customerId);
             if (customerOpt.isPresent()) {
@@ -178,7 +181,7 @@ public class    customerController {
         try {
             // Check if the customer exists
             int userId = Integer.parseInt(request.get("userId"));
-            int customerId = customerRepository.findById(userId).get().getId();
+            int customerId = customerRepository.findCustomerByUserid_Id(userId).getId();
             Optional<customer> customerOpt = customerRepository.findById(customerId);
 
             if (customerOpt.isPresent()) {
@@ -230,7 +233,7 @@ public class    customerController {
         try {
             // Check if the customer exists
             int userId = Integer.parseInt(request.get("userId"));
-            int customerId = customerRepository.findById(userId).get().getId();
+            int customerId = customerRepository.findCustomerByUserid_Id(userId).getId();
             Optional<customer> customerOpt = customerRepository.findById(customerId);
 
             if (customerOpt.isPresent()) {
@@ -279,7 +282,7 @@ public class    customerController {
         try {
             // Check if the customer exists
             int userId = Integer.parseInt(request.get("userId"));
-            int customerId = customerRepository.findById(userId).get().getId();
+            int customerId = customerRepository.findCustomerByUserid_Id(userId).getId();
             Optional<customer> customerOpt = customerRepository.findById(customerId);
 
             if (customerOpt.isPresent()) {
@@ -315,7 +318,7 @@ public class    customerController {
             // Check if the customer exists
             int userId = Integer.parseInt(request.get("userId"));
 
-            int customerId = customerRepository.findById(userId).get().getId();
+            int customerId = customerRepository.findCustomerByUserid_Id(userId).getId();
             int memRegId = memRegRepository.findById(customerId).get().getId();
 
             Optional<customer> customerOpt = customerRepository.findById(customerId);
