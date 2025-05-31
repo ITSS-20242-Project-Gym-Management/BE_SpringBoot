@@ -18,7 +18,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/customer")
-public class customerController {
+public class    customerController {
 
 
     @Autowired

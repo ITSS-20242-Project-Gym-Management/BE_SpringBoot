@@ -11,6 +11,7 @@ import com.example.itssprj_ver1.model.customer;
 import com.example.itssprj_ver1.service.ptService;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,12 +83,19 @@ public class ptController {
     }
 
     @PostMapping("/customer-list")
-    public ResponseEntity<List<customer>> getCustomerList(
+    public ResponseEntity<Map<String, Object>> getCustomerList(
             @RequestBody Map<String, Object> request
     ) {
+        Map<String, Object> response = new HashMap<>();
+
         Integer trainerId = (Integer) request.get("trainerId");
+        System.out.println("CHECKING TRAINER ID: " + trainerId);
         List<customer> customerList = ptService.customerListByTrainer(trainerId);
-        return ResponseEntity.ok(customerList);
+
+        response.put("customerList", customerList);
+
+
+        return ResponseEntity.ok(response);
     }
 
 }

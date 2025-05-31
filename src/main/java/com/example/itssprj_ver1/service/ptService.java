@@ -3,6 +3,7 @@ package com.example.itssprj_ver1.service;
 import com.example.itssprj_ver1.model.customer;
 import com.example.itssprj_ver1.model.staff;
 import com.example.itssprj_ver1.model.users;
+import com.example.itssprj_ver1.model.exerciseSession;
 import com.example.itssprj_ver1.repository.exerSessionRepository;
 import com.example.itssprj_ver1.repository.staffRepository;
 import com.example.itssprj_ver1.repository.userRepository;
@@ -66,6 +67,21 @@ public class ptService implements ptServiceI {
 
     @Override
     public List<customer> customerListByTrainer(Integer trainerId) {
-        return exerSessionRepository.findCustomer(trainerId);
+        List<exerciseSession> sessions = exerSessionRepository.findByStaff_Id(trainerId);
+        List<customer> customerFound = new ArrayList<>();
+        if(sessions == null || sessions.isEmpty()) {
+            return null;
+        }
+        List<customer> customers = new ArrayList<>();
+        for (exerciseSession session : sessions) {
+            customer customerToAdd = new customer();
+            customerToAdd = session.getCustomer();
+            if(customerFound.contains(customerToAdd)) {
+                continue;
+            }
+            customerFound.add(customerToAdd);
+        }
+
+        return customerFound;
     }
 }
