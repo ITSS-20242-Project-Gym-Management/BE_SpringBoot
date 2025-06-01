@@ -250,12 +250,11 @@ public class exerSession implements exerSessionI{
         Optional<customer> customerOpt = customerRepository.findById(customerId);
         if (customerOpt.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Customer not found", 400));
-        }
-
-        // Check for time conflicts - không tính buổi tập hiện tại đang cập nhật
+        }        // Check for time conflicts - không tính buổi tập hiện tại đang cập nhật
         boolean hasTrainerConflict = exerSessionRepository.findAll().stream()
             .filter(session -> !session.getId().equals(sessionId)) // Loại trừ buổi tập hiện tại
             .filter(session -> session.getStaff().getId().equals(trainerId))
+            .filter(session -> session.getBeginAt() != null && session.getEndAt() != null) // Kiểm tra null
             .anyMatch(session -> 
                 (beginAt.isBefore(session.getEndAt()) && endAt.isAfter(session.getBeginAt()))
             );
@@ -267,6 +266,7 @@ public class exerSession implements exerSessionI{
         boolean hasCustomerConflict = exerSessionRepository.findAll().stream()
             .filter(session -> !session.getId().equals(sessionId)) // Loại trừ buổi tập hiện tại
             .filter(session -> session.getCustomer().getId().equals(customerId))
+            .filter(session -> session.getBeginAt() != null && session.getEndAt() != null) // Kiểm tra null
             .anyMatch(session -> 
                 (beginAt.isBefore(session.getEndAt()) && endAt.isAfter(session.getBeginAt()))
             );

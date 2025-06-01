@@ -16,11 +16,15 @@ import java.util.List;
 public interface exerSessionRepository extends JpaRepository<exerciseSession, Integer> {
 
     @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM exerciseSession e " +
-            "WHERE e.staff = :trainer AND ((:beginAt BETWEEN e.beginAt AND e.endAt) OR (:endAt BETWEEN e.beginAt AND e.endAt))")
+            "WHERE e.staff = :trainer AND e.beginAt IS NOT NULL AND e.endAt IS NOT NULL AND " +
+            "((:beginAt BETWEEN e.beginAt AND e.endAt) OR (:endAt BETWEEN e.beginAt AND e.endAt) OR " +
+            "(e.beginAt BETWEEN :beginAt AND :endAt) OR (e.endAt BETWEEN :beginAt AND :endAt))")
     boolean existsByStaffAndTimeOverlap(@Param("trainer") staff trainer, @Param("beginAt") LocalDateTime beginAt, @Param("endAt") LocalDateTime endAt);
 
     @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM exerciseSession e " +
-            "WHERE e.customer = :customer AND ((:beginAt BETWEEN e.beginAt AND e.endAt) OR (:endAt BETWEEN e.beginAt AND e.endAt))")
+            "WHERE e.customer = :customer AND e.beginAt IS NOT NULL AND e.endAt IS NOT NULL AND " +
+            "((:beginAt BETWEEN e.beginAt AND e.endAt) OR (:endAt BETWEEN e.beginAt AND e.endAt) OR " +
+            "(e.beginAt BETWEEN :beginAt AND :endAt) OR (e.endAt BETWEEN :beginAt AND :endAt))")
     boolean existsByCustomerAndTimeOverlap(@Param("customer") customer customer, @Param("beginAt") LocalDateTime beginAt, @Param("endAt") LocalDateTime endAt);
 
     @Query("SELECT DISTINCT es.customer FROM exerciseSession es JOIN customer c on c.id = es.customer.id WHERE es.staff.id = :trainerId")
