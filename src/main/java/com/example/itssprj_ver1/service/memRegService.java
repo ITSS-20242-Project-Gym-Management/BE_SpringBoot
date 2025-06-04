@@ -241,6 +241,7 @@ public class memRegService implements memRegServiceI {
                 memRegMap.put("startAt", memReg.getBeginAt());
                 memRegMap.put("endAt", memReg.getEndAt());
                 memRegMap.put("status", memReg.getStatus());
+                memRegMap.put("membership", memReg.getMembership());
 
                 memRegData.add(memRegMap);
             }

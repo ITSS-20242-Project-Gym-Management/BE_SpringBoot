@@ -4,6 +4,7 @@ package com.example.itssprj_ver1.service;
 import com.example.itssprj_ver1.model.*;
 import com.example.itssprj_ver1.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -373,4 +374,6 @@ public class adminService implements adminServiceI {
     public boolean deleteRoomEquipment(roomEquipment roomEquipment) {
         return false;
     }
+
+
 }
